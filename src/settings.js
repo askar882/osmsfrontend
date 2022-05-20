@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'Vue Element Admin',
+  title: 'OSMS Frontend',
 
   /**
    * @type {boolean} true | false
