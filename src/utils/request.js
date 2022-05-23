@@ -12,9 +12,9 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   config => {
-    // 设置Authentication消息头
+    // 设置Authorization消息头
     if (store.getters.token) {
-      config.headers['Authentication'] = getToken()
+      config.headers['Authorization'] = 'Bearer ' + getToken()
     }
     return config
   },
