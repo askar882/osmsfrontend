@@ -8,6 +8,7 @@
 import { mapGetters } from 'vuex'
 import adminDashboard from './admin'
 import editorDashboard from './editor'
+import { isGuided, guide } from '@/utils/guide'
 
 export default {
   name: 'Dashboard',
@@ -23,8 +24,13 @@ export default {
     ])
   },
   created() {
-    if (!this.roles.includes('admin')) {
+    if (!this.roles.includes('ADMIN')) {
       this.currentRole = 'editorDashboard'
+    }
+  },
+  mounted() {
+    if (!isGuided()) {
+      guide()
     }
   }
 }

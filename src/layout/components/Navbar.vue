@@ -38,7 +38,7 @@
               首页
             </el-dropdown-item>
           </router-link>
-          <el-dropdown-item>
+          <el-dropdown-item divided @click.native="guide">
             <svg-icon icon-class="question" />
             引导
           </el-dropdown-item>
@@ -60,6 +60,7 @@ import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
 import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
+import { guide } from '@/utils/guide'
 
 export default {
   components: {
@@ -84,6 +85,9 @@ export default {
     async logout() {
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    },
+    guide() {
+      guide()
     }
   }
 }

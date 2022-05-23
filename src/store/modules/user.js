@@ -51,7 +51,7 @@ const actions = {
 
   // 登出
   async logout({ commit, state, dispatch }) {
-    await dispatch('user/resetToken')
+    await dispatch('resetToken')
     resetRouter()
     // 清除已访问的以及缓存的View
     dispatch('tagsView/delAllViews', null, { root: true })
