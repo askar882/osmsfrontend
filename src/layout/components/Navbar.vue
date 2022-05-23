@@ -27,13 +27,24 @@
         </div>
         <el-dropdown-menu slot="dropdown">
           <router-link to="/profile/index">
-            <el-dropdown-item>个人信息</el-dropdown-item>
+            <el-dropdown-item>
+              <svg-icon icon-class="user" />
+              个人信息
+            </el-dropdown-item>
           </router-link>
           <router-link to="/">
-            <el-dropdown-item>表盘</el-dropdown-item>
+            <el-dropdown-item>
+              <svg-icon icon-class="dashboard" />
+              首页
+            </el-dropdown-item>
           </router-link>
+          <el-dropdown-item>
+            <svg-icon icon-class="question" />
+            引导
+          </el-dropdown-item>
           <el-dropdown-item divided @click.native="logout">
-            <span style="display:block;">登出</span>
+            <svg-icon icon-class="logout" />
+            登出
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
