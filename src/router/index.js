@@ -35,8 +35,7 @@ import nestedRouter from './modules/nested'
 
 /**
  * constantRoutes
- * a base page that does not have permission requirements
- * all roles can be accessed
+ * 所有角色用户都可以访问的页面路由
  */
 export const constantRoutes = [
   {
@@ -79,7 +78,7 @@ export const constantRoutes = [
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
+        meta: { title: '首页', icon: 'dashboard', affix: true }
       }
     ]
   },
@@ -92,7 +91,7 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/guide/index'),
         name: 'Guide',
-        meta: { title: 'Guide', icon: 'guide', noCache: true }
+        meta: { title: '引导页', icon: 'guide', noCache: true }
       }
     ]
   },
@@ -106,7 +105,7 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/profile/index'),
         name: 'Profile',
-        meta: { title: 'Profile', icon: 'user', noCache: true }
+        meta: { title: '个人中心', icon: 'user', noCache: true }
       }
     ]
   }
@@ -114,19 +113,19 @@ export const constantRoutes = [
 
 /**
  * asyncRoutes
- * the routes that need to be dynamically loaded based on user roles
+ * 根据用户的角色自动加载的路由
  */
 export const asyncRoutes = [
   {
     path: '/permission',
     component: Layout,
     redirect: '/permission/page',
-    alwaysShow: true, // will always show the root menu
+    alwaysShow: true,
     name: 'Permission',
     meta: {
       title: 'Permission',
       icon: 'lock',
-      roles: ['admin', 'editor'] // you can set roles in root nav
+      roles: ['ADMIN']
     },
     children: [
       {
@@ -135,7 +134,7 @@ export const asyncRoutes = [
         name: 'PagePermission',
         meta: {
           title: 'Page Permission',
-          roles: ['admin'] // or you can only set roles in sub nav
+          roles: ['ADMIN']
         }
       },
       {
@@ -153,7 +152,7 @@ export const asyncRoutes = [
         name: 'RolePermission',
         meta: {
           title: 'Role Permission',
-          roles: ['admin']
+          roles: ['ADMIN']
         }
       }
     ]
@@ -365,8 +364,8 @@ export const asyncRoutes = [
     component: Layout,
     children: [
       {
-        path: 'https://github.com/PanJiaChen/vue-element-admin',
-        meta: { title: 'External Link', icon: 'link' }
+        path: '/api/docs/swagger',
+        meta: { title: 'API文档', icon: 'link' }
       }
     ]
   },
