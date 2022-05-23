@@ -52,8 +52,14 @@ const guideSteps = [
     padding: 0
   }
 ]
+const driverOptions = {
+  doneBtnText: '完成',
+  closeBtnText: '关闭',
+  nextBtnText: '下一步',
+  prevBtnText: '上一步'
+}
 
-let driver = new Driver()
+let driver = new Driver(driverOptions)
 
 export function isGuided() {
   return !!localStorage.getItem(guideKey)
@@ -61,7 +67,7 @@ export function isGuided() {
 
 export function guide() {
   if (!driver) {
-    driver = new Driver()
+    driver = new Driver(driverOptions)
   }
   driver.defineSteps(guideSteps)
   driver.start()
