@@ -30,54 +30,41 @@ const mutations = {
 
 const actions = {
   // 登录
-  login({ commit }, userInfo) {
+  async login({ commit }, userInfo) {
     const { username, password } = userInfo
-    return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
-    })
+    const response = await login({ username: username.trim(), password: password })
+    const { token } = response.data
+    commit('SET_TOKEN', token)
+    setToken(token)
   },
 
   // 获取用户信息
-  getInfo({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      const userData = extractToken()
-      const { name, roles, id, expiration } = userData
-      commit('SET_ROLES', roles)
-      commit('SET_NAME', name)
-      commit('SET_ID', id)
-      commit('SET_EXPIRATION', expiration)
-      resolve(userData)
-    })
+  async getInfo({ commit, state }) {
+    const userData = extractToken()
+    const { name, roles, id, expiration } = userData
+    commit('SET_ROLES', roles)
+    commit('SET_NAME', name)
+    commit('SET_ID', id)
+    commit('SET_EXPIRATION', expiration)
+    return userData
   },
 
   // 登出
-  logout({ commit, state, dispatch }) {
-    return new Promise((resolve, reject) => {
-      commit('SET_TOKEN', '')
-      commit('SET_ROLES', [])
-      removeToken()
-      resetRouter()
-      // 清除已访问的以及缓存的View
-      dispatch('tagsView/delAllViews', null, { root: true })
-      resolve()
-    })
+  async logout({ commit, state, dispatch }) {
+    await dispatch('user/resetToken')
+    resetRouter()
+    // 清除已访问的以及缓存的View
+    dispatch('tagsView/delAllViews', null, { root: true })
   },
 
   // 删除Token
-  resetToken({ commit }) {
-    return new Promise(resolve => {
-      commit('SET_TOKEN', '')
-      commit('SET_ROLES', [])
-      removeToken()
-      resolve()
-    })
+  async resetToken({ commit }) {
+    commit('SET_TOKEN', '')
+    commit('SET_ROLES', [])
+    commit('SET_NAME', '')
+    commit('SET_ID', '')
+    commit('SET_EXPIRATION', '')
+    removeToken()
   },
 
   // dynamically modify permissions

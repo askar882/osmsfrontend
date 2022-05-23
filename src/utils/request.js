@@ -56,14 +56,14 @@ service.interceptors.response.use(
     })
 
     // 接收到401状态码说明身份验证失败，当前请求不是登录请求时跳转到登录页
-    if (status === 401 && !/auth\/login$/.test(error.request.responseUrl)) {
-      MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
-        confirmButtonText: 'Re-Login',
-        cancelButtonText: 'Cancel',
+    if (status === 401 && !/auth\/login$/.test(error.request.responseURL)) {
+      MessageBox.confirm('你已被登出，可以取消继续留在该页面，或者重新登录。', '确定登出', {
+        confirmButtonText: '重新登录',
+        cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         store.dispatch('user/resetToken').then(() => {
-          location.reload()
+          location.reload() // 为了重新实例化vue-router对象 避免bug
         })
       })
     }
