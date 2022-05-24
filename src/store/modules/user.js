@@ -1,4 +1,4 @@
-import { login } from '@/api/user'
+import { login, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken, extractToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 
@@ -7,7 +7,9 @@ const state = {
   name: '',
   id: '',
   expiration: '',
-  roles: []
+  roles: [],
+  creation: '',
+  modification: ''
 }
 
 const mutations = {
@@ -25,6 +27,12 @@ const mutations = {
   },
   SET_ROLES: (state, roles) => {
     state.roles = roles
+  },
+  SET_CREATION: (state, creation) => {
+    state.creation = creation
+  },
+  SET_MODIFICATION: (state, modification) => {
+    state.modification = modification
   }
 }
 
@@ -46,6 +54,10 @@ const actions = {
     commit('SET_NAME', name)
     commit('SET_ID', id)
     commit('SET_EXPIRATION', expiration)
+    const userInfo = await getInfo(id)
+    const { creationTime: creation, modificationTime: modification } = userInfo.data.user
+    commit('SET_CREATION', creation)
+    commit('SET_MODIFICATION', modification)
     return userData
   },
 
@@ -64,6 +76,8 @@ const actions = {
     commit('SET_NAME', '')
     commit('SET_ID', '')
     commit('SET_EXPIRATION', '')
+    commit('SET_CREATION', '')
+    commit('SET_MODIFICATION', '')
     removeToken()
   },
 

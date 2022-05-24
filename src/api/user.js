@@ -8,16 +8,17 @@ export function login(data) {
   })
 }
 
-export function getInfo(token, userId) {
+export function getInfo(userId) {
   return request({
     url: `/users/${userId}`,
     method: 'get'
   })
 }
 
-// export function logout() {
-//   return request({
-//     url: '/auth/logout',
-//     method: 'delete'
-//   })
-// }
+export function updateUser(userId, userInfo) {
+  return request({
+    url: `/users/${userId}`,
+    method: 'put',
+    data: userInfo
+  })
+}
