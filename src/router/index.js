@@ -11,6 +11,7 @@ import chartsRouter from './modules/charts'
 import tableRouter from './modules/table'
 import nestedRouter from './modules/nested'
 import errorLogsRouter from './modules/error-logs'
+import modelsRouters from './modules/models'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -95,7 +96,8 @@ export const constantRoutes = [
         meta: { title: '个人中心', icon: 'user', noCache: true }
       }
     ]
-  }
+  },
+  ...modelsRouters
 ]
 
 /**
