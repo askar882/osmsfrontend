@@ -10,6 +10,7 @@ import Layout from '@/layout'
 import chartsRouter from './modules/charts'
 import tableRouter from './modules/table'
 import nestedRouter from './modules/nested'
+import errorLogsRouter from './modules/error-logs'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -148,23 +149,7 @@ export const asyncRoutes = [
   chartsRouter,
   nestedRouter,
   tableRouter,
-
-  {
-    path: '/error-log',
-    component: Layout,
-    children: [
-      {
-        path: 'log',
-        component: () => import('@/views/error-log/index'),
-        name: 'ErrorLog',
-        meta: {
-          title: '错误日志',
-          icon: 'bug'
-          // roles: ['ADMIN']
-        }
-      }
-    ]
-  },
+  errorLogsRouter,
 
   {
     path: 'external-link',
