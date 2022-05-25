@@ -65,7 +65,7 @@ export default {
   },
   data() {
     const phoneRules = [
-      { pattern: /^[0-9\-]*$/, message: '电话格式错误', trigger: 'change' },
+      { pattern: '^[0-9\-]*$', message: '电话格式错误', trigger: 'change' },
       { min: 7, max: 20, message: '长度应大于7小于20', trigger: 'blur' }
     ]
     return {
@@ -83,7 +83,7 @@ export default {
       editRules: {
         name: [
           {
-            pattern: chineseEnglishRegex,
+            pattern: chineseEnglishRegex.source,
             message: '格式错误',
             trigger: 'change'
           },
@@ -91,7 +91,11 @@ export default {
         ],
         contact: {
           name: [
-            { pattern: nameRegex, message: '姓名格式错误', trigger: 'change' },
+            {
+              pattern: nameRegex.source,
+              message: '姓名格式错误',
+              trigger: 'change'
+            },
             { min: 2, max: 20, message: '长度应大于2小于20', trigger: 'blur' }
           ],
           phone: phoneRules,
