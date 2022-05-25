@@ -45,6 +45,7 @@
 <script>
 import { chineseEnglishRegex, nameRegex } from '@/utils/regex'
 import { createDealer, updateDealer } from '@/api/dealers'
+import { deepClone } from '@/utils'
 
 export default {
   props: {
@@ -112,31 +113,32 @@ export default {
       }
     },
     createRules() {
-      const rules = { ...this.editRules }
+      const rules = deepClone(this.editRules)
       const required = { required: true, message: '此项必填', trigger: 'blur' }
       rules.name.push(required)
       rules.contact.name.push(required)
       rules.contact.phone.push(required)
+      rules.phone.push(required)
       rules.address.push(required)
       return rules
     }
   },
   created() {
     // 为了复用dummyData
-    this.formData = this.dummyData
+    this.formData = deepClone(this.dummyData)
   },
   methods: {
     dialogOpen() {
       this.submitting = false
-      this.formData = this.dummyData
+      this.formData = deepClone(this.dummyData)
       if (this.action === 'create') {
         this.formRules = this.createRules
       } else {
         this.formRules = this.editRules
-        const { id, products, ...dealer } = this.data
+        const { id, products, ...dealer } = deepClone(this.data)
         this.formData = dealer
       }
-      this.$refs?.form?.clearValidate()
+      this.$nextTick(() => this.$refs?.form?.clearValidate())
     },
     async submit() {
       try {

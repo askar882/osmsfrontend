@@ -7,7 +7,7 @@
         @click="addDealer"
       >添加</el-button>
     </div>
-    <el-table :data="tableData" :height="500" border>
+    <el-table :data="tableData" :loading="tableLoading" :height="500" border>
       <el-table-column prop="id" label="ID" />
       <el-table-column prop="name" label="名称" />
       <el-table-column prop="contact" label="联系人">
@@ -24,18 +24,18 @@
       <el-table-column prop="phone" label="联系电话" />
       <el-table-column prop="address" label="地址" />
       <el-table-column label="操作">
-        <template slot-scope="scope">
+        <template slot-scope="{ row }">
           <el-button
             size="mini"
             type="primary"
             icon="el-icon-edit"
-            @click="handleEdit(scope.$index, scope.row)"
+            @click="handleEdit(row)"
           >编辑</el-button>
           <el-button
             size="mini"
             type="danger"
             icon="el-icon-delete"
-            @click="handleDelete(scope.$index, scope.row)"
+            @click="handleDelete(row)"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -58,75 +58,70 @@ export default {
   components: { DealersDialog },
   data() {
     return {
-      tableData: [
-        {
-          id: 0,
-          name: 'test',
-          contact: {
-            name: 'contact',
-            phone: '12345678'
-          },
-          phone: '12345',
-          address: 'address'
-        }
-      ],
+      tableData: [],
       dialogVisible: false,
       dialogData: {},
-      dialogAction: 'create'
+      dialogAction: 'create',
+      tableLoading: false
     }
   },
   created() {
     this.getData()
   },
   methods: {
-    async getData(index, row) {
-      const { dealers } = (await listDealers()).data
-      console.debug('dealers:', dealers)
-      if (dealers && dealers.length > 0) {
+    async getData() {
+      this.tableLoading = true
+      try {
+        const { dealers } = (await listDealers()).data
+        console.debug('dealers:', dealers)
         this.tableData = dealers
+      } catch (e) {
+        console.debug('Failed to list dealers:', e)
+        this.$message({
+          message: '获取经销商列表失败',
+          type: 'error'
+        })
       }
+      this.tableLoading = false
     },
-    handleEdit(index, dealer) {
+    handleEdit(dealer) {
       this.dialogData = dealer
       this.dialogAction = 'edit'
       this.dialogVisible = true
     },
-    handleDelete(index, dealer) {
-      console.debug('delete:', arguments)
-      this.$confirm(`是否确认删除经销商'${dealer.name}'？`, '提示', {
-        confirmButtonClass: 'el-button--danger',
-        type: 'warning'
-      })
-        .then(() => {
-          deleteDealer(dealer.id)
-            .then(() => {
-              this.$message({
-                message: '删除成功',
-                type: 'success'
-              })
-              this.getData()
-            })
-            .catch((error) => {
-              console.debug(
-                `Failed to delete dealer '${dealer.name}'. Error:`,
-                error
-              )
-              this.$message({
-                message: '删除失败',
-                type: 'error'
-              })
-            })
+    async handleDelete(dealer) {
+      try {
+        await this.$confirm(`是否确认删除经销商'${dealer.name}'？`, '提示', {
+          confirmButtonClass: 'el-button--danger',
+          type: 'warning'
         })
-        .catch(() => {})
+      } catch {
+        return false
+      }
+      this.tableLoading = true
+      try {
+        await deleteDealer(dealer.id)
+        this.$message({
+          message: '删除成功',
+          type: 'success'
+        })
+        this.getData()
+      } catch (e) {
+        console.debug(`Failed to delete dealer '${dealer.name}'. Error:`, e)
+        this.$message({
+          message: '删除失败',
+          type: 'error'
+        })
+      }
+      this.tableLoading = false
     },
     addDealer() {
-      console.debug('addDealer')
       this.dialogData = {}
       this.dialogAction = 'create'
       this.dialogVisible = true
     },
     onSubmitSuccess(data) {
-      console.debug('onSubmitSuccess', data)
+      console.debug('Submit succeeded:', data)
       this.getData()
     }
   }
