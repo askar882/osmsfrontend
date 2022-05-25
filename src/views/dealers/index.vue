@@ -1,7 +1,11 @@
 <template>
   <div class="container">
     <div class="controls-container">
-      <el-button type="primary" icon="el-icon-plus" @click="addDealer">添加</el-button>
+      <el-button
+        type="primary"
+        icon="el-icon-plus"
+        @click="addDealer"
+      >添加</el-button>
     </div>
     <el-table :data="tableData" :height="500" border>
       <el-table-column prop="id" label="ID" />
@@ -36,14 +40,22 @@
         </template>
       </el-table-column>
     </el-table>
+    <dealers-dialog
+      :visible.sync="dialogVisible"
+      :data="dialogData"
+      :action="dialogAction"
+      @success="onSubmitSuccess"
+    />
   </div>
 </template>
 
 <script>
+import DealersDialog from './components/DealersDialog'
 import { listDealers, deleteDealer } from '@/api/dealers'
 
 export default {
   name: 'Dealers',
+  components: { DealersDialog },
   data() {
     return {
       tableData: [
@@ -57,7 +69,10 @@ export default {
           phone: '12345',
           address: 'address'
         }
-      ]
+      ],
+      dialogVisible: false,
+      dialogData: {},
+      dialogAction: 'create'
     }
   },
   created() {
@@ -72,7 +87,9 @@ export default {
       }
     },
     handleEdit(index, dealer) {
-      console.debug('edit:', arguments)
+      this.dialogData = dealer
+      this.dialogAction = 'edit'
+      this.dialogVisible = true
     },
     handleDelete(index, dealer) {
       console.debug('delete:', arguments)
@@ -83,7 +100,10 @@ export default {
         .then(() => {
           deleteDealer(dealer.id)
             .then(() => {
-              this.$message('删除成功')
+              this.$message({
+                message: '删除成功',
+                type: 'success'
+              })
               this.getData()
             })
             .catch((error) => {
@@ -101,6 +121,13 @@ export default {
     },
     addDealer() {
       console.debug('addDealer')
+      this.dialogData = {}
+      this.dialogAction = 'create'
+      this.dialogVisible = true
+    },
+    onSubmitSuccess(data) {
+      console.debug('onSubmitSuccess', data)
+      this.getData()
     }
   }
 }
