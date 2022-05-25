@@ -1,4 +1,4 @@
-import { login, getInfo } from '@/api/user'
+import { login, getUser } from '@/api/user'
 import { getToken, setToken, removeToken, extractToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 
@@ -54,7 +54,7 @@ const actions = {
     commit('SET_NAME', name)
     commit('SET_ID', id)
     commit('SET_EXPIRATION', expiration)
-    const userInfo = await getInfo(id)
+    const userInfo = await getUser(id)
     const { creationTime: creation, modificationTime: modification } = userInfo.data.user
     commit('SET_CREATION', creation)
     commit('SET_MODIFICATION', modification)

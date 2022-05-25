@@ -8,17 +8,39 @@ export function login(data) {
   })
 }
 
-export function getInfo(userId) {
+export function createUser(user) {
+  return request({
+    url: '/users',
+    method: 'post',
+    data: user
+  })
+}
+
+export function listUsers() {
+  return request({
+    url: '/users',
+    method: 'get'
+  })
+}
+
+export function getUser(userId) {
   return request({
     url: `/users/${userId}`,
     method: 'get'
   })
 }
 
-export function updateUser(userId, userInfo) {
+export function updateUser(userId, user) {
   return request({
     url: `/users/${userId}`,
     method: 'put',
-    data: userInfo
+    data: user
+  })
+}
+
+export function deleteUser(userId) {
+  return request({
+    url: `/users/${userId}`,
+    method: 'delete'
   })
 }
