@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-export function createDealer(customer) {
+export function createCustomer(customer) {
   return request({
     url: '/customers',
     method: 'post',
@@ -8,21 +8,21 @@ export function createDealer(customer) {
   })
 }
 
-export function listDealers() {
+export function listCustomers() {
   return request({
     url: '/customers',
     method: 'get'
   })
 }
 
-export function getDealer(customerId) {
+export function getCustomer(customerId) {
   return request({
     url: `/customers/${customerId}`,
     method: 'get'
   })
 }
 
-export function updateDealer(customerId, customer) {
+export function updateCustomer(customerId, customer) {
   return request({
     url: `/customers/${customerId}`,
     method: 'put',
@@ -30,7 +30,7 @@ export function updateDealer(customerId, customer) {
   })
 }
 
-export function deleteDealer(customerId) {
+export function deleteCustomer(customerId) {
   return request({
     url: `/customers/${customerId}`,
     method: 'delete'
