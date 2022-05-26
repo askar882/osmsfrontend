@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { alphanumericRegex } from '@/utils/regex'
+import { alphanumericRegex, chineseAlphanumericRegex } from '@/utils/regex'
 import { createProduct, updateProduct } from '@/api/products'
 import { listDealers } from '@/api/dealers'
 import { deepClone } from '@/utils'
@@ -88,7 +88,7 @@ export default {
       editRules: {
         name: [
           {
-            pattern: '^\\w*$',
+            pattern: chineseAlphanumericRegex.source,
             message: '格式错误',
             trigger: 'change'
           },

@@ -9,3 +9,5 @@ export const mobilePhoneRegex = /^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|
 export const landlinePhoneRegex = /^\d{3}-\d{8}|\d{4}-\d{7}$/
 
 export const alphanumericRegex = /^[a-zA-Z0-9]*$/
+
+export const chineseAlphanumericRegex = /^[a-zA-Z0-9\u4e00-\u9fcc]*$/
