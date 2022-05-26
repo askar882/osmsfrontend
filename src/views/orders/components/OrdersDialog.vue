@@ -14,7 +14,11 @@
     >
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="客户" prop="customer.id" :rules="formRules.customerId">
+          <el-form-item
+            label="客户"
+            prop="customer.id"
+            :rules="formRules.customerId"
+          >
             <el-select
               v-model="formData.customer.id"
               :disabled="action === 'edit'"
@@ -32,25 +36,44 @@
 
         <el-col :span="12">
           <el-form-item label="运费" prop="shippingCost">
-            <el-input v-model="formData.shippingCost" type="number" :min="0" />
+            <el-input
+              v-model="formData.shippingCost"
+              type="number"
+              :min="0"
+              :disabled="action === 'edit'"
+            />
           </el-form-item>
         </el-col>
       </el-row>
 
-      <el-form-item label="地址" prop="address">
-        <el-select
-          v-model="formData.address"
-          :disabled="action === 'edit' || customerAddresses.length < 1"
-          filterable
-        >
-          <el-option
-            v-for="(address, index) in customerAddresses"
-            :key="index"
-            :value="address"
-            :label="address"
-          />
-        </el-select>
-      </el-form-item>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="地址" prop="address">
+            <el-select
+              v-model="formData.address"
+              :disabled="action === 'edit' || customerAddresses.length < 1"
+              filterable
+            >
+              <el-option
+                v-for="(address, index) in customerAddresses"
+                :key="index"
+                :value="address"
+                :label="address"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+
+        <el-col :span="12">
+          <el-form-item v-show="action === 'edit'" label="创建时间">
+            <el-date-picker
+              v-model="formData.orderTime"
+              type="datetime"
+              disabled
+            />
+          </el-form-item>
+        </el-col>
+      </el-row>
 
       <el-row
         v-for="(orderItem, index) in formData.orderItems"
@@ -114,6 +137,30 @@
           />
         </el-col>
       </el-row>
+
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item v-show="action === 'edit'" label="发货时间" prop="shipmentTime">
+            <el-date-picker
+              v-model="formData.shipmentTime"
+              type="datetime"
+              placeholder="选择发货时间"
+              :disabled="data.shipmentTime !== null"
+            />
+          </el-form-item>
+        </el-col>
+
+        <el-col :span="12">
+          <el-form-item v-show="action === 'edit'" label="收货时间" prop="deliveryTime">
+            <el-date-picker
+              v-model="formData.deliveryTime"
+              type="datetime"
+              :placeholder="formData.shipmentTime === null ? '先选择发货时间' : '选择收货时间'"
+              :disabled="data.deliveryTime !== null || formData.shipmentTime === null"
+            />
+          </el-form-item>
+        </el-col>
+      </el-row>
     </el-form>
 
     <div slot="footer" class="dialog-footer">
@@ -121,6 +168,7 @@
       <el-button
         type="primary"
         :loading="submitting"
+        :disabled="action === 'edit' && data.deliveryTime !== null"
         @click="submit"
       >提交</el-button>
     </div>
@@ -160,7 +208,15 @@ export default {
       },
       formData: {},
       formRules: {},
-      editRules: {},
+      editRules: {
+        customerId: [],
+        shippingCost: [],
+        address: [],
+        orderCount: [],
+        productId: [],
+        shipmentTime: [],
+        deliveryTime: []
+      },
       createRules: {
         customerId: [required],
         shippingCost: [required],
@@ -170,7 +226,8 @@ export default {
       },
       submitting: false,
       customers: [],
-      products: []
+      products: [],
+      requiredRule: required
     }
   },
 
@@ -233,9 +290,13 @@ export default {
         this.formRules = this.createRules
       } else {
         this.formRules = this.editRules
-        const { id, customer, ...order } = this.data
-        order.customer = { id: customer.id }
+        const { orderItemsTree, ...order } = this.data
         this.formData = order
+        if (order.shipmentTime === null) {
+          this.formRules.shipmentTime.push(this.requiredRule)
+        } else if (order.deliveryTime === null) {
+          this.formRules.deliveryTime.push(this.requiredRule)
+        }
       }
       this.$nextTick(() => this.$refs?.form?.clearValidate())
     },
@@ -276,7 +337,15 @@ export default {
       return (await createOrder(this.formData)).data.order
     },
     async updateData() {
-      return (await updateOrder(this.data.id, this.formData)).data.order
+      const { shipmentTime, deliveryTime } = this.formData
+      const data = {}
+      if (this.data.shipmentTime === null) {
+        data.shipmentTime = shipmentTime
+      }
+      if (this.data.deliveryTime === null && deliveryTime) {
+        data.deliveryTime = deliveryTime
+      }
+      return (await updateOrder(this.data.id, data)).data.order
     },
     addOrderItem(index) {
       this.formData.orderItems.splice(index + 1, 0, {
@@ -288,7 +357,9 @@ export default {
       this.formData.orderItems.splice(index, 1)
     },
     productSelected(productId) {
-      return !!this.formData.orderItems.find(item => item.product.id === productId)
+      return !!this.formData.orderItems.find(
+        (item) => item.product.id === productId
+      )
     }
   }
 }
