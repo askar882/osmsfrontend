@@ -12,24 +12,30 @@
       :rules="formRules"
       :model="formData"
     >
-      <el-form-item label="客户" prop="customer.id">
-        <el-select
-          v-model="formData.customer.id"
-          :disabled="action === 'edit'"
-          filterable
-        >
-          <el-option
-            v-for="(customer, index) in customers"
-            :key="index"
-            :value="customer.id"
-            :label="customer.name"
-          />
-        </el-select>
-      </el-form-item>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="客户" prop="customer.id" :rules="formRules.customerId">
+            <el-select
+              v-model="formData.customer.id"
+              :disabled="action === 'edit'"
+              filterable
+            >
+              <el-option
+                v-for="(customer, index) in customers"
+                :key="index"
+                :value="customer.id"
+                :label="customer.name"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
 
-      <el-form-item label="运费" prop="shippingCost">
-        <el-input v-model="formData.shippingCost" type="number" :min="0" />
-      </el-form-item>
+        <el-col :span="12">
+          <el-form-item label="运费" prop="shippingCost">
+            <el-input v-model="formData.shippingCost" type="number" :min="0" />
+          </el-form-item>
+        </el-col>
+      </el-row>
 
       <el-form-item label="地址" prop="address">
         <el-select
@@ -46,65 +52,68 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item
+      <el-row
         v-for="(orderItem, index) in formData.orderItems"
         :key="index"
-        label="产品"
-        :required="action === 'create'"
+        :gutter="20"
+        type="flex"
+        justify="space-between"
       >
-        <el-row :gutter="20" type="flex" justify="space-between">
-          <el-col :span="10">
-            <el-form-item
-              :prop="`orderItems.${index}.product.id`"
-              :rules="formRules.orderItems.product"
+        <el-col :span="12">
+          <el-form-item
+            label="产品"
+            :prop="`orderItems.${index}.product.id`"
+            :rules="formRules.productId"
+          >
+            <el-select
+              v-model="formData.orderItems[index].product.id"
+              :disabled="action === 'edit'"
+              filterable
             >
-              <el-select
-                v-model="formData.orderItems[index].product.id"
-                :disabled="action === 'edit'"
-                filterable
-              >
-                <el-option
-                  v-for="(product, productIndex) in filteredProducts"
-                  :key="productIndex"
-                  :value="product.id"
-                  :label="product.name + '(' + product.code + ')'"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item
-              :prop="`orderItems.${index}.count`"
-              :rules="formRules.orderItems.count"
-            >
-              <el-input
-                v-model="formData.orderItems[index].count"
-                type="number"
-                :min="1"
-                :disabled="action === 'edit'"
+              <el-option
+                v-for="(product, productIndex) in products"
+                :key="productIndex"
+                :value="product.id"
+                :label="product.name + '(' + product.code + ')'"
+                :disabled="productSelected(product.id)"
               />
-            </el-form-item>
-          </el-col>
-          <el-col :offset="6" :span="2">
-            <el-button
-              type="primary"
-              size="mini"
-              icon="el-icon-plus"
-              :disabled="action === 'edit' || filteredProducts.length < 1"
-              @click="addOrderItem(index)"
+            </el-select>
+          </el-form-item>
+        </el-col>
+
+        <el-col :span="6">
+          <el-form-item
+            label="数量"
+            :prop="`orderItems.${index}.count`"
+            :rules="formRules.orderCount"
+          >
+            <el-input
+              v-model="formData.orderItems[index].count"
+              type="number"
+              :min="1"
+              :disabled="action === 'edit'"
             />
-          </el-col>
-          <el-col :span="2">
-            <el-button
-              type="primary"
-              size="mini"
-              icon="el-icon-delete"
-              :disabled="formData.orderItems.length < 2 || action === 'edit'"
-              @click="deleteOrderItem(index)"
-            />
-          </el-col>
-        </el-row>
-      </el-form-item>
+          </el-form-item>
+        </el-col>
+        <el-col :offset="2" :span="2">
+          <el-button
+            type="primary"
+            size="mini"
+            icon="el-icon-plus"
+            :disabled="action === 'edit' || filteredProducts.length < 1"
+            @click="addOrderItem(index)"
+          />
+        </el-col>
+        <el-col :span="2">
+          <el-button
+            type="primary"
+            size="mini"
+            icon="el-icon-delete"
+            :disabled="formData.orderItems.length < 2 || action === 'edit'"
+            @click="deleteOrderItem(index)"
+          />
+        </el-col>
+      </el-row>
     </el-form>
 
     <div slot="footer" class="dialog-footer">
@@ -153,15 +162,11 @@ export default {
       formRules: {},
       editRules: {},
       createRules: {
-        customer: {
-          id: [required]
-        },
+        customerId: [required],
         shippingCost: [required],
         address: [required],
-        orderItems: {
-          product: [required],
-          count: [required]
-        }
+        orderCount: [required],
+        productId: [required]
       },
       submitting: false,
       customers: [],
@@ -281,6 +286,9 @@ export default {
     },
     deleteOrderItem(index) {
       this.formData.orderItems.splice(index, 1)
+    },
+    productSelected(productId) {
+      return !!this.formData.orderItems.find(item => item.product.id === productId)
     }
   }
 }
