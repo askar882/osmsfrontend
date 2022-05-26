@@ -155,7 +155,7 @@ export default {
         this.formRules = this.createRules
       } else {
         this.formRules = this.editRules
-        const { id, orders, addressesTree, ...customer } = deepClone(this.data)
+        const { id, orders, ...customer } = deepClone(this.data)
         this.formData = customer
       }
       this.$nextTick(() => this.$refs?.form?.clearValidate())

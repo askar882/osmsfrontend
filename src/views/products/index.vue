@@ -8,12 +8,12 @@
       >添加</el-button>
     </div>
     <el-table :data="tableData" :loading="tableLoading" :height="500" border>
-      <el-table-column prop="id" label="ID" :width="60" />
-      <el-table-column prop="name" label="名称" />
-      <el-table-column prop="code" label="代码" />
-      <el-table-column prop="description" label="详情" />
-      <el-table-column prop="price" label="单价" />
-      <el-table-column label="经销商">
+      <el-table-column prop="id" label="ID" width="60" />
+      <el-table-column prop="name" label="名称" width="200" />
+      <el-table-column prop="code" label="代码" width="200" />
+      <el-table-column prop="description" label="详情" width="400" />
+      <el-table-column prop="price" label="单价" width="60" />
+      <el-table-column label="经销商" width="150">
         <template slot-scope="{ row }">
           <el-tooltip placement="top">
             <div slot="content">ID: {{ row.dealer.id }}</div>
@@ -21,7 +21,7 @@
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column label="操作" width="200" fixed="right">
         <template slot-scope="{ row }">
           <el-button
             size="mini"

@@ -8,9 +8,9 @@
       >添加</el-button>
     </div>
     <el-table :data="tableData" :loading="tableLoading" :height="500" border>
-      <el-table-column prop="id" label="ID" />
-      <el-table-column prop="name" label="名称" />
-      <el-table-column prop="contact" label="联系人">
+      <el-table-column prop="id" label="ID" width="60" />
+      <el-table-column prop="name" label="名称" width="200" />
+      <el-table-column prop="contact" label="联系人" width="200">
         <template slot-scope="{ row }">
           <el-popover trigger="hover" placement="top">
             <p>姓名：{{ row.contact.name }}</p>
@@ -21,9 +21,9 @@
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column prop="phone" label="联系电话" />
-      <el-table-column prop="address" label="地址" />
-      <el-table-column label="操作">
+      <el-table-column prop="phone" label="联系电话" width="200" />
+      <el-table-column prop="address" label="地址" width="400" />
+      <el-table-column label="操作" width="200" fixed="right">
         <template slot-scope="{ row }">
           <el-button
             size="mini"
@@ -91,7 +91,7 @@ export default {
     },
     async handleDelete(dealer) {
       try {
-        await this.$confirm(`是否确认删除经销商'${dealer.name}'？`, '提示', {
+        await this.$confirm(`是否确认删除经销商'${dealer.name}'？将删除该经销商关联的所有商品！`, '警告', {
           confirmButtonClass: 'el-button--danger',
           type: 'warning'
         })
