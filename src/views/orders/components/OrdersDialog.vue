@@ -290,7 +290,7 @@ export default {
         this.formRules = this.createRules
       } else {
         this.formRules = this.editRules
-        const { orderItemsTree, ...order } = this.data
+        const order = { ...this.data }
         this.formData = order
         if (order.shipmentTime === null) {
           this.formRules.shipmentTime.push(this.requiredRule)

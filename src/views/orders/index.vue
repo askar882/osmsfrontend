@@ -8,15 +8,15 @@
       >添加</el-button>
     </div>
     <el-table :data="tableData" :loading="tableLoading" :height="500" border>
-      <el-table-column prop="id" label="ID" width="60" />
-      <el-table-column prop="customer.name" label="下单客户" width="100" />
+      <el-table-column prop="id" label="ID" width="50" />
+      <el-table-column prop="customer.name" label="客户" width="100" />
       <el-table-column prop="address" label="地址" width="300" />
       <el-table-column prop="totalCost" label="总价" width="60" />
-      <el-table-column prop="shippingCost" label="运费" width="60" />
-      <el-table-column label="订单状态" width="300">
+      <el-table-column prop="shippingCost" label="运费" width="50" />
+      <el-table-column label="订单状态" width="450">
         <template slot-scope="{ row }">
           <el-steps
-            :space="100"
+            :space="150"
             :active="
               row.deliveryTime !== null ? 3 : row.shipmentTime !== null ? 2 : 1
             "
@@ -54,14 +54,16 @@
           </el-steps>
         </template>
       </el-table-column>
-      <el-table-column label="订单列表">
+      <el-table-column label="订单列表" width="100">
         <template slot-scope="{ row }">
-          <el-tree
-            v-if="row.orderItemsTree"
-            :data="row.orderItemsTree"
-            :props="{ children: 'children', label: 'label' }"
-          />
-          <p v-else>{{ row.orderItems[0].product.name }}</p>
+          <el-popover placement="left" trigger="click">
+            <el-table :data="row.orderItems" border max-height="300">
+              <el-table-column label="产品" prop="product.name" />
+              <el-table-column label="单价" prop="price" />
+              <el-table-column label="数量" prop="count" />
+            </el-table>
+            <el-button slot="reference">点击查看</el-button>
+          </el-popover>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="200" fixed="right">
@@ -116,20 +118,6 @@ export default {
       try {
         const { orders } = (await listOrders()).data
         console.debug('orders:', orders)
-        orders.forEach((order) => {
-          if (order.orderItems.length > 1) {
-            const root = {
-              label: order.orderItems[0].product.name,
-              children: []
-            }
-            order.orderItems
-              .slice(1)
-              .forEach((orderItem) =>
-                root.children.push({ label: orderItem.product.name })
-              )
-            order.orderItemsTree = [root]
-          }
-        })
         this.tableData = orders
       } catch (e) {
         console.debug('Failed to list orders:', e)
