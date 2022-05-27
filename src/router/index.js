@@ -108,6 +108,9 @@ export const asyncRoutes = [
   {
     path: '/users',
     component: Layout,
+    meta: {
+      roles: ['ADMIN']
+    },
     children: [
       {
         path: '',
@@ -115,8 +118,7 @@ export const asyncRoutes = [
         name: 'Users',
         meta: {
           title: '用户管理',
-          icon: 'user',
-          roles: ['ADMIN']
+          icon: 'user'
         }
       }
     ]

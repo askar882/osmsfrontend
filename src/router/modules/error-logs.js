@@ -11,15 +11,17 @@ if ((isString(errorLog) && env === errorLog) ||
   errorLogsRouter = {
     path: '/error-log',
     component: Layout,
+    meta: {
+      roles: ['ADMIN']
+    },
     children: [
       {
-        path: 'log',
+        path: '',
         component: () => import('@/views/error-log/index'),
         name: 'ErrorLog',
         meta: {
           title: '错误日志',
-          icon: 'bug',
-          roles: ['ADMIN']
+          icon: 'bug'
         }
       }
     ]
