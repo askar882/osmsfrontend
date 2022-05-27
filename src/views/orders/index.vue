@@ -3,11 +3,18 @@
     <div class="controls-container">
       <el-button
         type="primary"
+        icon="el-icon-refresh"
+        :disabled="tableLoading"
+        @click="refresh"
+      >刷新</el-button>
+      <el-button
+        type="primary"
         icon="el-icon-plus"
+        :disabled="tableLoading"
         @click="addOrder"
       >添加</el-button>
     </div>
-    <el-table :data="tableData" :loading="tableLoading" :height="500" border>
+    <el-table v-loading="tableLoading" :data="tableData" :height="500" border>
       <el-table-column prop="id" label="ID" width="50" />
       <el-table-column prop="customer.name" label="客户" width="100" />
       <el-table-column prop="address" label="地址" width="300" />
@@ -168,7 +175,14 @@ export default {
       console.debug('Submit succeeded:', data)
       this.getData()
     },
-    parseTime: parseTime
+    parseTime: parseTime,
+    async refresh() {
+      await this.getData()
+      this.$message({
+        message: '刷新成功',
+        type: 'success'
+      })
+    }
   }
 }
 </script>
