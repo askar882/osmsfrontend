@@ -7,9 +7,6 @@ Vue.use(Router)
 import Layout from '@/layout'
 
 /* Router模块 */
-import chartsRouter from './modules/charts'
-import tableRouter from './modules/table'
-import nestedRouter from './modules/nested'
 import errorLogsRouter from './modules/error-logs'
 import modelsRouters from './modules/models'
 
@@ -124,52 +121,6 @@ export const asyncRoutes = [
     ]
   },
 
-  {
-    path: '/permission',
-    component: Layout,
-    redirect: '/permission/page',
-    alwaysShow: true,
-    name: 'Permission',
-    meta: {
-      title: 'Permission',
-      icon: 'lock',
-      roles: ['ADMIN']
-    },
-    children: [
-      {
-        path: 'page',
-        component: () => import('@/views/permission/page'),
-        name: 'PagePermission',
-        meta: {
-          title: 'Page Permission',
-          roles: ['ADMIN']
-        }
-      },
-      {
-        path: 'directive',
-        component: () => import('@/views/permission/directive'),
-        name: 'DirectivePermission',
-        meta: {
-          title: 'Directive Permission'
-          // if do not set roles, means: this page does not require permission
-        }
-      },
-      {
-        path: 'role',
-        component: () => import('@/views/permission/role'),
-        name: 'RolePermission',
-        meta: {
-          title: 'Role Permission',
-          roles: ['ADMIN']
-        }
-      }
-    ]
-  },
-
-  /** when your routing map is too long, you can split it into small modules **/
-  chartsRouter,
-  nestedRouter,
-  tableRouter,
   errorLogsRouter,
 
   {
