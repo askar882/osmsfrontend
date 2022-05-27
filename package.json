@@ -41,6 +41,7 @@
     "xlsx": "0.14.1"
   },
   "devDependencies": {
+    "@faker-js/faker": "^5.5.3",
     "@vue/cli-plugin-babel": "4.4.4",
     "@vue/cli-plugin-eslint": "4.4.4",
     "@vue/cli-plugin-unit-jest": "4.4.4",

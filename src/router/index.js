@@ -9,6 +9,7 @@ import Layout from '@/layout'
 /* Router模块 */
 import errorLogsRouter from './modules/error-logs'
 import modelsRouters from './modules/models'
+import dataGeneratorRouter from './modules/data-generator'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -122,6 +123,7 @@ export const asyncRoutes = [
   },
 
   errorLogsRouter,
+  dataGeneratorRouter,
 
   {
     path: 'external-link',
