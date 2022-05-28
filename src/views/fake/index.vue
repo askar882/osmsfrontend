@@ -2,12 +2,64 @@
   <div class="container">
     <el-row :gutter="20" type="flex" justify="end" align="middle">
       <el-col :span="8">
-        <el-radio-group v-model="generationType">
-          <el-radio label="dealer">经销商</el-radio>
-          <el-radio label="customer">客户</el-radio>
-          <el-radio label="product">产品</el-radio>
-          <el-radio label="order">订单</el-radio>
-        </el-radio-group>
+        <el-select
+          v-if="activeTab === 'order'"
+          v-model="selectedCustomers"
+          value-key="id"
+          :popper-append-to-body="false"
+          placeholder="留空随机选择客户"
+          class="selector"
+          multiple
+          filterable
+          clearable
+        >
+          <el-option
+            v-for="customer in customers"
+            :key="customer.id"
+            :value="customer"
+            :label="customer.name"
+          />
+        </el-select>
+      </el-col>
+
+      <el-col :span="8">
+        <el-select
+          v-if="activeTab === 'product'"
+          v-model="selectedDealers"
+          value-key="id"
+          :popper-append-to-body="false"
+          placeholder="留空随机选择经销商"
+          class="selector"
+          multiple
+          filterable
+          clearable
+        >
+          <el-option
+            v-for="dealer in dealers"
+            :key="dealer.id"
+            :value="dealer"
+            :label="dealer.name"
+          />
+        </el-select>
+
+        <el-select
+          v-else-if="activeTab === 'order'"
+          v-model="selectedProducts"
+          value-key="id"
+          :popper-append-to-body="false"
+          placeholder="留空随机选择产品"
+          class="selector"
+          multiple
+          filterable
+          clearable
+        >
+          <el-option
+            v-for="product in products"
+            :key="product.id"
+            :value="product"
+            :label="product.name + '(' + product.price + '元)'"
+          />
+        </el-select>
       </el-col>
       <el-col :span="4">
         <el-button
@@ -20,16 +72,16 @@
     <div class="container">
       <el-tabs v-model="activeTab">
         <el-tab-pane label="经销商" name="dealer">
-          <dealers-table :dealers="dealers" :loading="loading" />
+          <dealers-table :dealers="generatedDealers" :loading="loading" />
         </el-tab-pane>
         <el-tab-pane label="客户" name="customer">
-          <customers-table :customers="customers" :loading="loading" />
+          <customers-table :customers="generatedCustomers" :loading="loading" />
         </el-tab-pane>
         <el-tab-pane label="产品" name="product">
-          <products-table :products="products" :loading="loading" />
+          <products-table :products="generatedProducts" :loading="loading" />
         </el-tab-pane>
         <el-tab-pane label="订单" name="order">
-          <orders-table :orders="orders" :loading="loading" />
+          <orders-table :orders="generatedOrders" :loading="loading" />
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -41,14 +93,15 @@ import DealersTable from './components/DealersTable'
 import CustomersTable from './components/CustomersTable'
 import ProductsTable from './components/ProductsTable'
 import OrdersTable from './components/OrdersTable'
-import { createDealer } from '@/api/dealers'
-import { createCustomer } from '@/api/customers'
-// import { createProduct } from '@/api/products'
-// import { createOrder } from '@/api/orders'
+import { listDealers, createDealer } from '@/api/dealers'
+import { listCustomers, createCustomer } from '@/api/customers'
+import { listProducts, createProduct } from '@/api/products'
+import { createOrder } from '@/api/orders'
 const enFaker = require('@faker-js/faker/locale/en')
 const zhFaker = require('@faker-js/faker/locale/zh_CN')
 
 export default {
+  name: 'DataGenerator',
   components: {
     DealersTable,
     CustomersTable,
@@ -57,20 +110,39 @@ export default {
   },
   data() {
     return {
-      generationType: 'dealer',
       activeTab: 'dealer',
       loading: false,
       dealers: [],
       customers: [],
       products: [],
-      orders: []
+      generatedDealers: [],
+      generatedCustomers: [],
+      generatedProducts: [],
+      generatedOrders: [],
+      selectedDealers: [],
+      selectedProducts: [],
+      selectedCustomers: []
     }
   },
+  created() {
+    this.getData()
+  },
   methods: {
-    async generate() {
-      console.debug('generate:', this.generationType)
+    async getData() {
       this.loading = true
-      switch (this.generationType) {
+      try {
+        this.dealers = (await listDealers()).data.dealers
+        this.customers = (await listCustomers()).data.customers
+        this.products = (await listProducts()).data.products
+      } catch (e) {
+        console.debug(e)
+      }
+      this.loading = false
+    },
+    async generate() {
+      console.debug('generate:', this.activeTab)
+      this.loading = true
+      switch (this.activeTab) {
         case 'dealer':
           await this.generateDealer()
           break
@@ -90,7 +162,8 @@ export default {
     fakeEmail: () => enFaker.internet.email(),
     fakeNumber: () => zhFaker.phone.phoneNumber(),
     randomInt: (min, max) => enFaker.datatype.number({ min, max }),
-    randomFloat: (min, max) => enFaker.datatype.number({ precision: 0.01, min, max }),
+    randomFloat: (min, max) =>
+      enFaker.datatype.number({ precision: 0.01, min, max }),
     fakeAddress() {
       return zhFaker
         .fake(
@@ -116,7 +189,9 @@ export default {
           address: this.fakeAddress()
         }
         try {
-          this.dealers.push((await createDealer(dealer)).data.dealer)
+          const { dealer: created } = (await createDealer(dealer)).data
+          this.generatedDealers.push(created)
+          this.dealers.push(created)
           successCount++
         } catch (e) {
           console.debug(e)
@@ -146,9 +221,13 @@ export default {
           email: this.fakeEmail(),
           addresses: []
         }
-        new Array(this.randomInt(1, 5)).fill(0).forEach(() => customer.addresses.push(this.fakeAddress()))
+        new Array(this.randomInt(1, 5))
+          .fill(0)
+          .forEach(() => customer.addresses.push(this.fakeAddress()))
         try {
-          this.customers.push((await createCustomer(customer)).data.customer)
+          const { customer: created } = (await createCustomer(customer)).data
+          this.generatedCustomers.push(created)
+          this.customers.push(created)
           successCount++
         } catch (e) {
           console.debug(e)
@@ -168,76 +247,109 @@ export default {
       }
     },
     async generateProduct() {
-      // let successCount = 0
+      let successCount = 0
+      const dealers =
+        this.selectedDealers.length > 0 ? this.selectedDealers : this.dealers
+      if (dealers.length <= 0) {
+        this.$message({
+          message: '生成失败，无可用经销商',
+          type: 'error',
+          duration: 3000
+        })
+        return
+      }
       for (let i = 0; i < 10; i++) {
         const product = {
           name: enFaker.commerce.productName(),
           code: enFaker.datatype.uuid().replace(/-/g, ''),
           description: enFaker.commerce.productDescription(),
           price: this.randomFloat(1, 200),
-          dealer: {
-            id: 0
-          }
+          dealer: {}
         }
+        product.dealer.id = dealers[this.randomInt(0, dealers.length - 1)].id
         console.log(product)
-        // try {
-        //   this.products.push((await createProduct(product)).data.product)
-        //   successCount++
-        // } catch (e) {
-        //   console.debug(e)
-        // }
+        try {
+          const { product: created } = (await createProduct(product)).data
+          this.generatedProducts.push(created)
+          this.products.push(created)
+          successCount++
+        } catch (e) {
+          console.debug(e)
+        }
       }
-      // if (successCount > 0) {
-      //   this.$message({
-      //     message: `成功生成${successCount}条数据`,
-      //     type: 'success',
-      //     duration: 3000
-      //   })
-      // } else {
-      //   this.$message({
-      //     message: '生成数据失败',
-      //     type: 'error'
-      //   })
-      // }
+      if (successCount > 0) {
+        this.$message({
+          message: `成功生成${successCount}条数据`,
+          type: 'success',
+          duration: 3000
+        })
+      } else {
+        this.$message({
+          message: '生成数据失败',
+          type: 'error'
+        })
+      }
     },
     async generateOrder() {
-      // let successCount = 0
+      let successCount = 0
+      const customers = this.selectedCustomers.length > 0 ? this.selectedCustomers : this.customers
+      const products = this.selectedProducts.length > 0 ? this.selectedProducts : this.products
+      if (customers.length <= 0) {
+        this.$message({
+          message: '生成失败，无可用客户',
+          type: 'error',
+          duration: 3000
+        })
+        return
+      }
+      if (products.length <= 0) {
+        this.$message({
+          message: '生成失败，无可用产品',
+          type: 'error',
+          duration: 3000
+        })
+        return
+      }
       for (let i = 0; i < 10; i++) {
         const order = {
-          customer: {
-            id: null
-          },
-          shippingCost: enFaker.datatype.boolean ? 0 : this.randomFloat(0, 50),
-          address: this.fakeAddress(),
-          orderItems: [
-            {
-              product: {
-                id: null
-              },
-              count: this.randomInt(1, 20)
-            }
-          ]
+          customer: {},
+          shippingCost: enFaker.datatype.boolean() ? 0 : this.randomFloat(0, 50),
+          address: '',
+          orderItems: []
         }
+        const randomCustomer = customers[this.randomInt(0, customers.length - 1)]
+        order.customer.id = randomCustomer.id
+        order.address = randomCustomer.addresses[this.randomInt(0, randomCustomer.addresses.length - 1)]
+        new Array(this.randomInt(1, Math.min(10, products.length))).fill(0).forEach(() => {
+          // 过滤已选择的产品
+          const filteredProducts = products.filter(product => order.orderItems.find(item => item.product.id === product.id) === undefined)
+          order.orderItems.push({
+            product: {
+              id: filteredProducts[this.randomInt(0, filteredProducts.length - 1)].id
+            },
+            count: this.randomInt(1, 20)
+          })
+        })
         console.log(order)
-        // try {
-        //   this.orders.push((await createOrder(order)).data.order)
-        //   successCount++
-        // } catch (e) {
-        //   console.debug(e)
-        // }
+        try {
+          this.generatedOrders.push((await createOrder(order)).data.order)
+          successCount++
+        } catch (e) {
+          console.debug(e)
+        }
       }
-      // if (successCount > 0) {
-      //   this.$message({
-      //     message: `成功生成${successCount}条数据`,
-      //     type: 'success',
-      //     duration: 3000
-      //   })
-      // } else {
-      //   this.$message({
-      //     message: '生成数据失败',
-      //     type: 'error'
-      //   })
-      // }
+      if (successCount > 0) {
+        this.$message({
+          message: `成功生成${successCount}条数据`,
+          type: 'success',
+          duration: 3000
+        })
+      } else {
+        this.$message({
+          message: '生成数据失败',
+          type: 'error'
+        })
+      }
     }
   }
 }
@@ -246,6 +358,10 @@ export default {
 <style scoped>
 .container {
   margin: 20px;
+}
+
+.selector {
+  width: 100%;
 }
 </style>
 >

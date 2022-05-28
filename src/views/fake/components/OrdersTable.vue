@@ -1,10 +1,10 @@
 <template>
   <div>
-    <el-table :data="orders" height="500px">
+    <el-table v-loading="loading" :data="orders" height="500px">
       <el-table-column prop="customer.name" label="客户" width="100" />
       <el-table-column prop="address" label="地址" />
-      <el-table-column prop="totalCost" label="总价" width="60" />
-      <el-table-column prop="shippingCost" label="运费" width="50" />
+      <el-table-column prop="totalCost" label="总价" width="100" />
+      <el-table-column prop="shippingCost" label="运费" width="80" />
       <el-table-column label="订单状态" width="450">
         <template slot-scope="{ row }">
           <el-steps
@@ -46,7 +46,7 @@
           </el-steps>
         </template>
       </el-table-column>
-      <el-table-column label="订单列表" width="100">
+      <el-table-column label="订单列表">
         <template slot-scope="{ row }">
           <el-popover placement="left" trigger="click">
             <el-table :data="row.orderItems" border max-height="300">

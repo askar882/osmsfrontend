@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-table :data="products" height="500px">
+    <el-table v-loading="loading" :data="products" height="500px">
       <el-table-column prop="id" label="ID" width="60" />
       <el-table-column prop="name" label="名称" />
       <el-table-column prop="code" label="代码" />

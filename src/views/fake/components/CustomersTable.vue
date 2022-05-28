@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-table :data="customers" height="500px">
+    <el-table v-loading="loading" :data="customers" height="500px">
       <el-table-column prop="name" label="姓名" />
       <el-table-column prop="gender" label="性别" width="60">
         <template slot-scope="{ row }">

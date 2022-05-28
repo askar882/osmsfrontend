@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-table :data="dealers" height="500px">
+    <el-table v-loading="loading" :data="dealers" height="500px">
       <el-table-column prop="id" label="ID" width="60" />
       <el-table-column prop="name" label="名称" />
       <el-table-column prop="contact.name" label="联系人姓名" />
