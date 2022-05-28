@@ -19,7 +19,7 @@
       <el-table-column prop="name" label="名称" width="200" />
       <el-table-column prop="code" label="代码" width="200" />
       <el-table-column prop="description" label="详情" width="400" />
-      <el-table-column prop="price" label="单价" width="60" />
+      <el-table-column prop="price" label="单价" width="60" :formatter="priceFormatter" />
       <el-table-column label="经销商" width="150">
         <template slot-scope="{ row }">
           <el-tooltip placement="top">
@@ -57,6 +57,7 @@
 <script>
 import ProductsDialog from './components/ProductsDialog'
 import { listProducts, deleteProduct } from '@/api/products'
+import { priceFormatter } from '@/utils'
 
 export default {
   name: 'Products',
@@ -135,7 +136,8 @@ export default {
         message: '刷新成功',
         type: 'success'
       })
-    }
+    },
+    priceFormatter: priceFormatter
   }
 }
 </script>

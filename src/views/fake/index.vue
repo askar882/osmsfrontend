@@ -174,8 +174,14 @@ export default {
         )
         .replace(/\s/g, '')
     },
+    randomFutureDay(refDate, minDay = 0, maxDay = 5) {
+      const date = refDate || new Date()
+      let future = date.getTime()
+      const dayMilliseconds = 24 * 3600 * 1000
+      future += this.randomInt(minDay * dayMilliseconds, maxDay * dayMilliseconds)
+      return new Date(future)
+    },
     async generateDealer() {
-      window.fakers = { enFaker, zhFaker }
       let successCount = 0
       for (let i = 0; i < 10; i++) {
         const dealer = {
@@ -292,8 +298,12 @@ export default {
     },
     async generateOrder() {
       let successCount = 0
-      const customers = this.selectedCustomers.length > 0 ? this.selectedCustomers : this.customers
-      const products = this.selectedProducts.length > 0 ? this.selectedProducts : this.products
+      const customers =
+        this.selectedCustomers.length > 0
+          ? this.selectedCustomers
+          : this.customers
+      const products =
+        this.selectedProducts.length > 0 ? this.selectedProducts : this.products
       if (customers.length <= 0) {
         this.$message({
           message: '生成失败，无可用客户',
@@ -317,19 +327,43 @@ export default {
           address: '',
           orderItems: []
         }
-        const randomCustomer = customers[this.randomInt(0, customers.length - 1)]
+        const randomCustomer =
+          customers[this.randomInt(0, customers.length - 1)]
         order.customer.id = randomCustomer.id
-        order.address = randomCustomer.addresses[this.randomInt(0, randomCustomer.addresses.length - 1)]
-        new Array(this.randomInt(1, Math.min(10, products.length))).fill(0).forEach(() => {
-          // 过滤已选择的产品
-          const filteredProducts = products.filter(product => order.orderItems.find(item => item.product.id === product.id) === undefined)
-          order.orderItems.push({
-            product: {
-              id: filteredProducts[this.randomInt(0, filteredProducts.length - 1)].id
-            },
-            count: this.randomInt(1, 20)
+        order.address =
+          randomCustomer.addresses[
+            this.randomInt(0, randomCustomer.addresses.length - 1)
+          ]
+        // 可过滤的产品列表，防止复用products导致只能生成一组数据
+        const filterableProducts = [...products]
+        new Array(this.randomInt(1, Math.min(10, filterableProducts.length)))
+          .fill(0)
+          .forEach(() => {
+            const randomIndex = this.randomInt(0, filterableProducts.length - 1)
+            order.orderItems.push({
+              product: {
+                id: filterableProducts[randomIndex].id
+              },
+              count: this.randomInt(1, 20)
+            })
+            // 删除已选择的产品
+            filterableProducts.splice(randomIndex, 1)
           })
-        })
+        // 随机设置下单时间、发货时间和签收时间
+        // 0代表不设置，1代表设置下单时间，2代表设置发货时间，3代表设置签收时间
+        // 后两个时间分别依赖前面的时间
+        const generationType = this.randomInt(0, 3)
+        if (generationType > 0) {
+          const orderTime = enFaker.date.past(1)
+          order.orderTime = orderTime
+          if (generationType > 1) {
+            const shipmentTime = this.randomFutureDay(orderTime, 0, 1)
+            order.shipmentTime = shipmentTime
+            if (generationType > 2) {
+              order.deliveryTime = this.randomFutureDay(shipmentTime, 1)
+            }
+          }
+        }
         console.log(order)
         try {
           this.generatedOrders.push((await createOrder(order)).data.order)

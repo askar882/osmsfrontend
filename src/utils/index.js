@@ -1,5 +1,6 @@
 /**
  * Created by PanJiaChen on 16/11/18.
+ * Modified by askar882 on 2022/05/28.
  */
 
 /**
@@ -354,4 +355,19 @@ export function removeClass(ele, cls) {
     const reg = new RegExp('(\\s|^)' + cls + '(\\s|$)')
     ele.className = ele.className.replace(reg, ' ')
   }
+}
+
+/**
+ * Price formatter for ElementTable column.
+ *
+ * @param {ElRow} row ElementTable row.
+ * @param {ElCol} col ElementTable column.
+ * @param {any} val ElementTable cell value
+ * @returns Formatted floating point number with two digits of precision.
+ */
+export function priceFormatter(row, col, val) {
+  if (!isNaN(parseFloat(val))) {
+    return parseFloat(val).toFixed(2)
+  }
+  return '0.00'
 }

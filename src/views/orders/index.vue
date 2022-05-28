@@ -18,8 +18,8 @@
       <el-table-column prop="id" label="ID" width="50" />
       <el-table-column prop="customer.name" label="客户" width="100" />
       <el-table-column prop="address" label="地址" width="300" />
-      <el-table-column prop="totalCost" label="总价" width="60" />
-      <el-table-column prop="shippingCost" label="运费" width="50" />
+      <el-table-column prop="totalCost" label="总价" width="60" :formatter="priceFormatter" />
+      <el-table-column prop="shippingCost" label="运费" width="50" :formatter="priceFormatter" />
       <el-table-column label="订单状态" width="450">
         <template slot-scope="{ row }">
           <el-steps
@@ -66,7 +66,7 @@
           <el-popover placement="left" trigger="click">
             <el-table :data="row.orderItems" border max-height="300">
               <el-table-column label="产品" prop="product.name" />
-              <el-table-column label="单价" prop="price" />
+              <el-table-column label="单价" prop="price" :formatter="priceFormatter" />
               <el-table-column label="数量" prop="count" />
             </el-table>
             <el-button slot="reference">点击查看</el-button>
@@ -102,7 +102,7 @@
 <script>
 import OrdersDialog from './components/OrdersDialog'
 import { listOrders, deleteOrder } from '@/api/orders'
-import { parseTime } from '@/utils'
+import { parseTime, priceFormatter } from '@/utils'
 
 export default {
   name: 'Orders',
@@ -182,7 +182,8 @@ export default {
         message: '刷新成功',
         type: 'success'
       })
-    }
+    },
+    priceFormatter: priceFormatter
   }
 }
 </script>
