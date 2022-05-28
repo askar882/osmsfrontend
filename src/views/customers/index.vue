@@ -17,30 +17,36 @@
     <el-table
       v-loading="tableLoading"
       :data="tableData"
-      :height="500"
+      max-height="500"
       border
+      @sort-change="handleSortChange"
     >
-      <el-table-column prop="id" label="ID" width="60" />
-      <el-table-column prop="name" label="姓名" width="100" />
-      <el-table-column prop="gender" label="性别" width="60">
+      <el-table-column prop="id" label="ID" width="60" sortable="custom" />
+      <el-table-column prop="name" label="姓名" width="100" sortable="custom" />
+      <el-table-column prop="gender" label="性别" width="80" sortable="custom">
         <template slot-scope="{ row }">
           <el-tag type="primary">{{
             row.gender === 'MALE' ? '男' : '女'
           }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="phone" label="电话" width="150" />
-      <el-table-column prop="email" label="邮箱" width="200" />
-      <el-table-column prop="birthDate" label="生日" width="150">
+      <el-table-column prop="phone" label="电话" width="150" sortable="custom" />
+      <el-table-column prop="email" label="邮箱" sortable="custom" />
+      <el-table-column prop="birthDate" label="生日" width="150" sortable="custom">
         <template slot-scope="{ row }">
           {{ row.birthDate | parseDate }}
         </template>
       </el-table-column>
 
-      <el-table-column label="地址" width="300">
+      <el-table-column label="地址">
         <template slot-scope="{ row }">
           <el-popover v-if="row.addresses.length > 1">
-            <el-table :data="row.addresses" :show-header="false" max-height="300" border>
+            <el-table
+              :data="row.addresses"
+              :show-header="false"
+              max-height="300"
+              border
+            >
               <el-table-column width="300">
                 <template slot-scope="slot">
                   <div>{{ slot.row }}</div>
@@ -71,6 +77,17 @@
       </el-table-column>
     </el-table>
 
+    <el-pagination
+      class="pagination"
+      layout="total, sizes, prev, pager, next, jumper"
+      :page-sizes="[5, 10, 20, 50]"
+      :page-size.sync="pageSize"
+      :current-page.sync="currentPage"
+      :total="totalCustomers"
+      @size-change="getData"
+      @current-change="getData"
+    />
+
     <customers-dialog
       :visible.sync="dialogVisible"
       :data="dialogData"
@@ -89,7 +106,7 @@ export default {
   name: 'Customers',
   components: { CustomersDialog },
   filters: {
-    parseDate: time => parseTime(time, '{y}年{m}月{d}日')
+    parseDate: (time) => parseTime(time, '{y}年{m}月{d}日')
   },
   data() {
     return {
@@ -97,7 +114,11 @@ export default {
       dialogVisible: false,
       dialogData: {},
       dialogAction: 'create',
-      tableLoading: false
+      tableLoading: false,
+      totalCustomers: 0,
+      pageSize: 10,
+      currentPage: 0,
+      tableSort: 'id,asc'
     }
   },
   created() {
@@ -106,10 +127,20 @@ export default {
   methods: {
     async getData() {
       this.tableLoading = true
+      console.debug(
+        `pageSize: ${this.pageSize}, currentPage: ${this.currentPage}`
+      )
       try {
-        const { customers } = (await listCustomers()).data
+        const { customers, total } = (
+          await listCustomers({
+            size: this.pageSize,
+            page: this.currentPage - 1,
+            sort: this.tableSort
+          })
+        ).data
         console.debug('customers:', customers)
         this.tableData = customers
+        this.totalCustomers = total
       } catch (e) {
         console.debug('Failed to list customers:', e)
         this.$message({
@@ -126,10 +157,14 @@ export default {
     },
     async handleDelete(customer) {
       try {
-        await this.$confirm(`是否确认删除客户'${customer.name}'？将删除该客户关联的所有订单！`, '警告', {
-          confirmButtonClass: 'el-button--danger',
-          type: 'warning'
-        })
+        await this.$confirm(
+          `是否确认删除客户'${customer.name}'？将删除该客户关联的所有订单！`,
+          '警告',
+          {
+            confirmButtonClass: 'el-button--danger',
+            type: 'warning'
+          }
+        )
       } catch {
         return false
       }
@@ -165,6 +200,16 @@ export default {
         message: '刷新成功',
         type: 'success'
       })
+    },
+    handleSortChange({ prop, order }) {
+      let sort = 'id,asc'
+      if (order) {
+        sort = `${prop},${order === 'ascending' ? 'asc' : 'desc'}`
+      }
+      if (sort !== this.tableSort) {
+        this.tableSort = sort
+        this.getData()
+      }
     }
   }
 }
@@ -180,5 +225,9 @@ export default {
   padding: 0 20px;
   display: flex;
   justify-content: flex-end;
+}
+
+.pagination {
+  margin: 20px;
 }
 </style>

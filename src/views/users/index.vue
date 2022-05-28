@@ -32,7 +32,7 @@
           <el-tag v-else type="danger">禁用</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="在线" width="100">
+      <el-table-column label="在线" width="80">
         <template slot-scope="{ row }">
           <el-tag v-if="row.online" type="success">是</el-tag>
           <el-tag v-else type="info">否</el-tag>
@@ -41,13 +41,13 @@
       <el-table-column
         prop="creationTime"
         label="创建时间"
-        width="300"
+        width="200"
         :formatter="timeFormatter"
       />
       <el-table-column
         prop="modificationTime"
         label="修改时间"
-        width="300"
+        width="200"
         :formatter="timeFormatter"
       />
       <el-table-column label="操作" width="300" fixed="right">
