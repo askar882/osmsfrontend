@@ -21,12 +21,28 @@
       <el-form-item label="确认密码" prop="password2">
         <el-input v-model="formData.password2" type="password" />
       </el-form-item>
-      <el-form-item label="角色" prop="role">
-        <el-select v-model="formData.role">
-          <el-option label="用户" value="USER" />
-          <el-option label="管理员" value="ADMIN" />
-        </el-select>
-      </el-form-item>
+
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="角色" prop="role">
+            <el-select v-model="formData.role">
+              <el-option label="用户" value="USER" />
+              <el-option label="管理员" value="ADMIN" />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="状态" prop="enabled">
+            <el-switch
+              v-model="formData.enabled"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              active-text="启用"
+              inactive-text="禁用"
+            />
+          </el-form-item>
+        </el-col>
+      </el-row>
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click="innerVisible = false">取消</el-button>
@@ -77,7 +93,8 @@ export default {
         username: '',
         password: '',
         password2: '',
-        role: 'USER'
+        role: 'USER',
+        enabled: true
       },
       formData: {},
       formRules: {},
