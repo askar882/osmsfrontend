@@ -1,6 +1,6 @@
-import { login, getUser } from '@/api/user'
+import { login, getUser, logout } from '@/api/user'
 import { getToken, setToken, removeToken, extractToken } from '@/utils/auth'
-import router, { resetRouter } from '@/router'
+import { resetRouter } from '@/router'
 
 const state = {
   token: getToken(),
@@ -63,6 +63,7 @@ const actions = {
 
   // 登出
   async logout({ commit, state, dispatch }) {
+    await logout()
     await dispatch('resetToken')
     resetRouter()
     // 清除已访问的以及缓存的View
@@ -79,27 +80,6 @@ const actions = {
     commit('SET_CREATION', '')
     commit('SET_MODIFICATION', '')
     removeToken()
-  },
-
-  // dynamically modify permissions
-  // TODO: DELETE
-  async changeRoles({ commit, dispatch }, role) {
-    const token = role + '-token'
-
-    commit('SET_TOKEN', token)
-    setToken(token)
-
-    const { roles } = await dispatch('getInfo')
-
-    resetRouter()
-
-    // generate accessible routes map based on roles
-    const accessRoutes = await dispatch('permission/generateRoutes', roles, { root: true })
-    // dynamically add accessible routes
-    router.addRoutes(accessRoutes)
-
-    // reset visited views and cached views
-    dispatch('tagsView/delAllViews', null, { root: true })
   }
 }
 

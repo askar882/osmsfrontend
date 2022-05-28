@@ -2,6 +2,7 @@ import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
+import { debounce } from '.'
 
 // 创建axios实例
 const service = axios.create({
@@ -24,6 +25,23 @@ service.interceptors.request.use(
     return Promise.reject(error)
   }
 )
+
+// 防抖处理401响应，防止多次请求错误后一直弹出提示框
+const unauthenticatedHandler = debounce(() => {
+  // 如果当前页面为登录页，则不显示警告
+  if (/\/login/.test(location.hash)) {
+    return
+  }
+  MessageBox.confirm('你已被登出，可以取消继续留在该页面，或者重新登录。', '确定登出', {
+    confirmButtonText: '重新登录',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(() => {
+    store.dispatch('user/resetToken').then(() => {
+      location.reload() // 为了重新实例化vue-router对象 避免bug
+    })
+  })
+}, 300)
 
 // 响应拦截器
 service.interceptors.response.use(
@@ -57,15 +75,7 @@ service.interceptors.response.use(
 
     // 接收到401状态码说明身份验证失败，当前请求不是登录请求时跳转到登录页
     if (status === 401 && !/auth\/login$/.test(error.request.responseURL)) {
-      MessageBox.confirm('你已被登出，可以取消继续留在该页面，或者重新登录。', '确定登出', {
-        confirmButtonText: '重新登录',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        store.dispatch('user/resetToken').then(() => {
-          location.reload() // 为了重新实例化vue-router对象 避免bug
-        })
-      })
+      unauthenticatedHandler()
     }
     return Promise.reject(error)
   }

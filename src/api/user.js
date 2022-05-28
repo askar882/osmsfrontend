@@ -8,6 +8,17 @@ export function login(data) {
   })
 }
 
+export function logout(userId) {
+  let url = '/auth/logout'
+  if (typeof userId !== 'undefined') {
+    url += `/${userId}`
+  }
+  return request({
+    url,
+    method: 'delete'
+  })
+}
+
 export function createUser(user) {
   return request({
     url: '/users',
