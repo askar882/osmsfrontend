@@ -20,6 +20,7 @@
       max-height="500"
       border
       @sort-change="handleSortChange"
+      @filter-change="handleFilterChange"
     >
       <el-table-column prop="id" label="ID" width="60" sortable="custom" />
       <el-table-column
@@ -27,6 +28,8 @@
         label="客户"
         width="100"
         sortable="custom"
+        :filters="customerFilters"
+        column-key="customers"
       />
       <el-table-column
         prop="address"
@@ -148,6 +151,7 @@
 import OrdersDialog from './components/OrdersDialog'
 import { listOrders, deleteOrder } from '@/api/orders'
 import { parseTime, priceFormatter } from '@/utils'
+import { listCustomers } from '@/api/customers'
 
 export default {
   name: 'Orders',
@@ -161,11 +165,14 @@ export default {
       tableLoading: false,
       totalData: 0,
       pageSize: 10,
-      currentPage: 0,
-      tableSort: 'id,asc'
+      currentPage: 1,
+      tableSort: 'id,asc',
+      customerFilters: [],
+      selectedCustomers: []
     }
   },
   created() {
+    this.getCustomers()
     this.getData()
   },
   methods: {
@@ -176,7 +183,8 @@ export default {
           await listOrders({
             size: this.pageSize,
             page: this.currentPage - 1,
-            sort: this.tableSort
+            sort: this.tableSort,
+            customers: this.selectedCustomers
           })
         ).data
         console.debug('orders:', orders)
@@ -253,6 +261,21 @@ export default {
         this.tableSort = sort
         this.getData()
       }
+    },
+    async getCustomers() {
+      try {
+        const { customers } = (await listCustomers({ size: 0 })).data
+        this.customerFilters = customers.map((customer) => ({
+          text: customer.name,
+          value: customer.id
+        }))
+      } catch (e) {
+        console.debug(e)
+      }
+    },
+    handleFilterChange({ customers }) {
+      this.selectedCustomers = customers
+      this.getData()
     }
   }
 }

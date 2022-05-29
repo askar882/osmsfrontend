@@ -124,6 +124,7 @@ export default {
       return rules
     }
   },
+  // FIXME: 复用index.vue里的dealers
   created() {
     // 为了复用dummyData
     this.formData = deepClone(this.dummyData)

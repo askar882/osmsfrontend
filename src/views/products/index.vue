@@ -25,7 +25,12 @@
       <el-table-column prop="id" label="ID" width="60" sortable="custom" />
       <el-table-column prop="name" label="名称" width="200" sortable="custom" />
       <el-table-column prop="code" label="代码" width="200" sortable="custom" />
-      <el-table-column prop="description" label="详情" width="400" sortable="custom" />
+      <el-table-column
+        prop="description"
+        label="详情"
+        width="400"
+        sortable="custom"
+      />
       <el-table-column
         prop="price"
         label="单价"
@@ -33,7 +38,14 @@
         sortable="custom"
         :formatter="priceFormatter"
       />
-      <el-table-column label="经销商" width="150" :filters="dealerFilters" column-key="dealers">
+      <el-table-column
+        prop="dealer.name"
+        label="经销商"
+        width="150"
+        sortable="custom"
+        :filters="dealerFilters"
+        column-key="dealers"
+      >
         <template slot-scope="{ row }">
           <el-tooltip placement="top">
             <div slot="content">ID: {{ row.dealer.id }}</div>
@@ -98,7 +110,7 @@ export default {
       tableLoading: false,
       totalData: 0,
       pageSize: 10,
-      currentPage: 0,
+      currentPage: 1,
       tableSort: 'id,asc',
       dealerFilters: [],
       selectedDealers: []
@@ -193,7 +205,10 @@ export default {
     async getDealers() {
       try {
         const { dealers } = (await listDealers({ size: 0 })).data
-        this.dealerFilters = dealers.map(dealer => ({ text: dealer.name, value: dealer.id }))
+        this.dealerFilters = dealers.map((dealer) => ({
+          text: dealer.name,
+          value: dealer.id
+        }))
       } catch (e) {
         console.debug(e)
       }

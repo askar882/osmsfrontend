@@ -96,7 +96,7 @@ export default {
       tableLoading: false,
       totalData: 0,
       pageSize: 10,
-      currentPage: 0,
+      currentPage: 1,
       tableSort: 'id,asc'
     }
   },

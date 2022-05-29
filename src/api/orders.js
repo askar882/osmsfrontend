@@ -8,10 +8,13 @@ export function createOrder(order) {
   })
 }
 
-export function listOrders({ size = 10, page = 0, sort = 'id,asc' } = {}) {
+export function listOrders({ size = 10, page = 0, sort = 'id,asc', customers = [] } = {}) {
   let params = {}
   if (size > 0) {
     params = { size, page, sort }
+  }
+  if (customers.length > 0) {
+    params.customers = customers.join(',')
   }
   return request({
     url: '/orders',
