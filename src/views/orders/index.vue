@@ -142,6 +142,7 @@
       :visible.sync="dialogVisible"
       :data="dialogData"
       :action="dialogAction"
+      :customers="customers"
       @success="onSubmitSuccess"
     />
   </div>
@@ -167,8 +168,16 @@ export default {
       pageSize: 10,
       currentPage: 1,
       tableSort: 'id,asc',
-      customerFilters: [],
+      customers: [],
       selectedCustomers: []
+    }
+  },
+  computed: {
+    customerFilters() {
+      return this.customers.map((customer) => ({
+        text: customer.name,
+        value: customer.id
+      }))
     }
   },
   created() {
@@ -264,11 +273,7 @@ export default {
     },
     async getCustomers() {
       try {
-        const { customers } = (await listCustomers({ size: 0 })).data
-        this.customerFilters = customers.map((customer) => ({
-          text: customer.name,
-          value: customer.id
-        }))
+        this.customers = (await listCustomers({ size: 0 })).data.customers
       } catch (e) {
         console.debug(e)
       }

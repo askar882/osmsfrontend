@@ -177,7 +177,6 @@
 
 <script>
 import { createOrder, updateOrder } from '@/api/orders'
-import { listCustomers } from '@/api/customers'
 import { deepClone } from '@/utils'
 import { listProducts } from '@/api/products'
 
@@ -195,6 +194,10 @@ export default {
     data: {
       type: Object,
       default: () => ({})
+    },
+    customers: {
+      type: Array,
+      required: true
     }
   },
 
@@ -225,7 +228,6 @@ export default {
         productId: [required]
       },
       submitting: false,
-      customers: [],
       products: [],
       requiredRule: required
     }
@@ -262,16 +264,7 @@ export default {
     this.formRules = this.createRules
     // 为了复用dummyData
     this.formData = deepClone(this.dummyData)
-    listCustomers()
-      .then(({ data }) => (this.customers = data.customers))
-      .catch((e) => {
-        console.debug(e)
-        this.$message({
-          message: '获取客户列表失败',
-          type: 'error'
-        })
-      })
-    listProducts()
+    listProducts({ size: 0 })
       .then(({ data }) => (this.products = data.products))
       .catch((e) => {
         console.debug(e)

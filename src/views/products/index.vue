@@ -87,6 +87,7 @@
       :visible.sync="dialogVisible"
       :data="dialogData"
       :action="dialogAction"
+      :dealers="dealers"
       @success="onSubmitSuccess"
     />
   </div>
@@ -112,8 +113,16 @@ export default {
       pageSize: 10,
       currentPage: 1,
       tableSort: 'id,asc',
-      dealerFilters: [],
+      dealers: [],
       selectedDealers: []
+    }
+  },
+  computed: {
+    dealerFilters() {
+      return this.dealers.map((dealer) => ({
+        text: dealer.name,
+        value: dealer.id
+      }))
     }
   },
   created() {
@@ -205,10 +214,7 @@ export default {
     async getDealers() {
       try {
         const { dealers } = (await listDealers({ size: 0 })).data
-        this.dealerFilters = dealers.map((dealer) => ({
-          text: dealer.name,
-          value: dealer.id
-        }))
+        this.dealers = dealers
       } catch (e) {
         console.debug(e)
       }

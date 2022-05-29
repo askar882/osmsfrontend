@@ -53,7 +53,6 @@
 <script>
 import { alphanumericRegex, chineseAlphanumericRegex } from '@/utils/regex'
 import { createProduct, updateProduct } from '@/api/products'
-import { listDealers } from '@/api/dealers'
 import { deepClone } from '@/utils'
 
 export default {
@@ -70,6 +69,10 @@ export default {
     data: {
       type: Object,
       default: () => ({})
+    },
+    dealers: {
+      type: Array,
+      required: true
     }
   },
   data() {
@@ -98,8 +101,7 @@ export default {
         description: [{ min: 10, message: '长度应大于10', trigger: 'blur' }],
         price: []
       },
-      submitting: false,
-      dealers: []
+      submitting: false
     }
   },
   computed: {
@@ -124,19 +126,9 @@ export default {
       return rules
     }
   },
-  // FIXME: 复用index.vue里的dealers
   created() {
     // 为了复用dummyData
     this.formData = deepClone(this.dummyData)
-    listDealers()
-      .then(({ data }) => (this.dealers = data.dealers))
-      .catch((e) => {
-        console.debug(e)
-        this.$message({
-          message: '获取经销商列表失败',
-          type: 'error'
-        })
-      })
   },
   methods: {
     dialogOpen() {

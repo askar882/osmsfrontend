@@ -125,6 +125,7 @@ export default {
     }
   },
   created() {
+    window.fakers = { enFaker, zhFaker }
     this.getData()
   },
   methods: {
