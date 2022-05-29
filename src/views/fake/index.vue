@@ -47,7 +47,7 @@
           v-model="selectedProducts"
           value-key="id"
           :popper-append-to-body="false"
-          placeholder="留空随机选择产品"
+          placeholder="留空随机选择商品"
           class="selector"
           multiple
           filterable
@@ -77,7 +77,7 @@
         <el-tab-pane label="客户" name="customer">
           <customers-table :customers="generatedCustomers" :loading="loading" />
         </el-tab-pane>
-        <el-tab-pane label="产品" name="product">
+        <el-tab-pane label="商品" name="product">
           <products-table :products="generatedProducts" :loading="loading" />
         </el-tab-pane>
         <el-tab-pane label="订单" name="order">
@@ -314,7 +314,7 @@ export default {
       }
       if (products.length <= 0) {
         this.$message({
-          message: '生成失败，无可用产品',
+          message: '生成失败，无可用商品',
           type: 'error',
           duration: 3000
         })
@@ -334,7 +334,7 @@ export default {
           randomCustomer.addresses[
             this.randomInt(0, randomCustomer.addresses.length - 1)
           ]
-        // 可过滤的产品列表，防止复用products导致只能生成一组数据
+        // 可过滤的商品列表，防止复用products导致只能生成一组数据
         const filterableProducts = [...products]
         new Array(this.randomInt(1, Math.min(10, filterableProducts.length)))
           .fill(0)
@@ -346,7 +346,7 @@ export default {
               },
               count: this.randomInt(1, 20)
             })
-            // 删除已选择的产品
+            // 删除已选择的商品
             filterableProducts.splice(randomIndex, 1)
           })
         // 随机设置下单时间、发货时间和签收时间

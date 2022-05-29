@@ -2,16 +2,16 @@
   <div class="dashboard-editor-container">
     <panel-group :data-count="dataCount" @selectionChanged="handlePanelSelected" />
 
-    <!-- 月销售额折线图 -->
+    <!-- 最新变化 -->
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <line-chart :chart-data="lineChartData" />
+      <latest-table :type.sync="selectedPanel" :data="latestData" />
     </el-row>
 
     <el-row :gutter="32">
       <!-- 经销商市场占比饼图 -->
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
-          <raddar-chart />
+          <dealers-chart />
         </div>
       </el-col>
 
@@ -22,7 +22,7 @@
         </div>
       </el-col>
 
-      <!-- 热销产品排行柱状图 -->
+      <!-- 热销商品排行柱状图 -->
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
           <bar-chart />
@@ -34,8 +34,8 @@
 
 <script>
 import PanelGroup from './components/PanelGroup'
-import LineChart from './components/LineChart'
-import RaddarChart from './components/RaddarChart'
+import LatestTable from './components/LatestTable'
+import DealersChart from './components/DealersChart'
 import PieChart from './components/PieChart'
 import BarChart from './components/BarChart'
 import { isGuided, guide } from '@/utils/guide'
@@ -67,8 +67,8 @@ export default {
   name: 'DashboardAdmin',
   components: {
     PanelGroup,
-    LineChart,
-    RaddarChart,
+    LatestTable,
+    DealersChart,
     PieChart,
     BarChart
   },
@@ -77,12 +77,13 @@ export default {
       lineChartData: lineChartData.customer,
       dataCount: {},
       loadingService: this.$loading(),
-      loading: true
+      loading: true,
+      selectedPanel: 'customers',
+      latestData: {}
     }
   },
   watch: {
     loading(val) {
-      console.debug('Loading state changed:', val)
       if (val) {
         this.loadingService = this.$loading()
       } else {
@@ -100,19 +101,25 @@ export default {
   },
   methods: {
     handlePanelSelected(type) {
-      console.debug('handlePanelSelected:', type)
+      this.selectedPanel = type
     },
     async getData() {
       this.loading = true
-      const { dealers } = (await listDealers()).data
-      const { customers } = (await listCustomers()).data
-      const { products } = (await listProducts()).data
-      const { orders } = (await listOrders()).data
+      const dealersData = (await listDealers()).data
+      const customersData = (await listCustomers()).data
+      const productsData = (await listProducts()).data
+      const ordersData = (await listOrders()).data
       this.dataCount = {
-        dealer: dealers.length,
-        customer: customers.length,
-        product: products.length,
-        order: orders.length
+        dealer: dealersData.total,
+        customer: customersData.total,
+        product: productsData.total,
+        order: ordersData.total
+      }
+      this.latestData = {
+        dealers: dealersData.dealers,
+        customers: customersData.customers,
+        products: productsData.products,
+        orders: ordersData.orders
       }
       this.loading = false
     }
@@ -139,7 +146,4 @@ export default {
   }
 }
 
-.loading {
-
-}
 </style>

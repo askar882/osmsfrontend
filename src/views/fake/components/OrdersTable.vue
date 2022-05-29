@@ -51,7 +51,7 @@
         <template slot-scope="{ row }">
           <el-popover placement="left" trigger="click">
             <el-table :data="row.orderItems" border max-height="300">
-              <el-table-column label="产品" prop="product.name" />
+              <el-table-column label="商品" prop="product.name" />
               <el-table-column label="单价" prop="price" :formatter="priceFormatter" />
               <el-table-column label="数量" prop="count" />
             </el-table>

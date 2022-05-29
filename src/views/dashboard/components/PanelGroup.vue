@@ -1,28 +1,34 @@
 <template>
   <el-row :gutter="40" class="panel-group">
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="selectionChanged('customer')">
-        <div class="card-panel-icon-wrapper icon-people">
-          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            客户
-          </div>
-          <count-to :start-val="0" :end-val="dataCount.customer" :duration="2600" class="card-panel-num" />
-        </div>
-      </div>
-    </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="selectionChanged('dealer')">
         <div class="card-panel-icon-wrapper icon-message">
           <svg-icon icon-class="dealer" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">
-            经销商
-          </div>
-          <count-to :start-val="0" :end-val="dataCount.dealer" :duration="3000" class="card-panel-num" />
+          <div class="card-panel-text">经销商</div>
+          <count-to
+            :start-val="0"
+            :end-val="dataCount.dealer"
+            :duration="3000"
+            class="card-panel-num"
+          />
+        </div>
+      </div>
+    </el-col>
+    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+      <div class="card-panel" @click="selectionChanged('customer')">
+        <div class="card-panel-icon-wrapper icon-people">
+          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
+        </div>
+        <div class="card-panel-description">
+          <div class="card-panel-text">客户</div>
+          <count-to
+            :start-val="0"
+            :end-val="dataCount.customer"
+            :duration="2600"
+            class="card-panel-num"
+          />
         </div>
       </div>
     </el-col>
@@ -32,10 +38,13 @@
           <svg-icon icon-class="product" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">
-            产品
-          </div>
-          <count-to :start-val="0" :end-val="dataCount.product" :duration="3200" class="card-panel-num" />
+          <div class="card-panel-text">商品</div>
+          <count-to
+            :start-val="0"
+            :end-val="dataCount.product"
+            :duration="3200"
+            class="card-panel-num"
+          />
         </div>
       </div>
     </el-col>
@@ -45,10 +54,13 @@
           <svg-icon icon-class="shopping" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">
-            订单
-          </div>
-          <count-to :start-val="0" :end-val="dataCount.order" :duration="3600" class="card-panel-num" />
+          <div class="card-panel-text">订单</div>
+          <count-to
+            :start-val="0"
+            :end-val="dataCount.order"
+            :duration="3600"
+            class="card-panel-num"
+          />
         </div>
       </div>
     </el-col>
@@ -63,7 +75,7 @@ export default {
   props: {
     dataCount: {
       type: Object,
-      default: () => ({ customer: 102400, dealer: 81212, product: 9280, order: 13600 })
+      default: () => ({ customer: 0, dealer: 0, product: 0, order: 0 })
     }
   },
   methods: {
@@ -90,8 +102,8 @@ export default {
     overflow: hidden;
     color: #666;
     background: #fff;
-    box-shadow: 4px 4px 40px rgba(0, 0, 0, .05);
-    border-color: rgba(0, 0, 0, .05);
+    box-shadow: 4px 4px 40px rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.05);
 
     &:hover {
       .card-panel-icon-wrapper {
@@ -111,7 +123,7 @@ export default {
       }
 
       .icon-shopping {
-        background: #34bfa3
+        background: #34bfa3;
       }
     }
 
@@ -128,7 +140,7 @@ export default {
     }
 
     .icon-shopping {
-      color: #34bfa3
+      color: #34bfa3;
     }
 
     .card-panel-icon-wrapper {
@@ -164,7 +176,7 @@ export default {
   }
 }
 
-@media (max-width:550px) {
+@media (max-width: 550px) {
   .card-panel-description {
     display: none;
   }

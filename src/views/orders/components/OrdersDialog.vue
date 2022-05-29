@@ -84,7 +84,7 @@
       >
         <el-col :span="12">
           <el-form-item
-            label="产品"
+            label="商品"
             :prop="`orderItems.${index}.product.id`"
             :rules="formRules.productId"
           >
