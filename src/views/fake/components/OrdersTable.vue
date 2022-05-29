@@ -1,6 +1,7 @@
 <template>
   <div>
-    <el-table v-loading="loading" :data="orders" height="500px">
+    <el-table v-loading="loading" :data="pagedData" max-height="500px" border>
+      <el-table-column prop="customer.id" label="ID" width="60" />
       <el-table-column prop="customer.name" label="客户" width="100" />
       <el-table-column prop="address" label="地址" />
       <el-table-column prop="totalCost" label="总价" width="100" :formatter="priceFormatter" />
@@ -59,6 +60,16 @@
         </template>
       </el-table-column>
     </el-table>
+
+    <el-pagination
+      class="pagination"
+      layout="total, sizes, prev, pager, next, jumper"
+      :pager-count="13"
+      :page-sizes="[5, 10, 20, 50]"
+      :page-size.sync="pageSize"
+      :current-page.sync="currentPage"
+      :total="orders.length"
+    />
   </div>
 </template>
 
@@ -76,9 +87,27 @@ export default {
       required: true
     }
   },
+  data() {
+    return {
+      pageSize: 10,
+      currentPage: 1
+    }
+  },
+  computed: {
+    pagedData() {
+      const start = this.pageSize * (this.currentPage - 1)
+      return this.orders.slice(start, start + this.pageSize)
+    }
+  },
   methods: {
     parseTime: parseTime,
     priceFormatter: priceFormatter
   }
 }
 </script>
+
+<style scoped>
+.pagination {
+  margin: 20px;
+}
+</style>

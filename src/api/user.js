@@ -28,14 +28,14 @@ export function createUser(user) {
 }
 
 export function listUsers({ size = 10, page = 0, sort = 'id,asc' } = {}) {
+  let params = {}
+  if (size > 0) {
+    params = { size, page, sort }
+  }
   return request({
     url: '/users',
     method: 'get',
-    params: {
-      size,
-      page,
-      sort
-    }
+    params
   })
 }
 

@@ -131,9 +131,9 @@ export default {
     async getData() {
       this.loading = true
       try {
-        this.dealers = (await listDealers()).data.dealers
-        this.customers = (await listCustomers()).data.customers
-        this.products = (await listProducts()).data.products
+        this.dealers = (await listDealers({ size: 0 })).data.dealers
+        this.customers = (await listCustomers({ size: 0 })).data.customers
+        this.products = (await listProducts({ size: 0 })).data.products
       } catch (e) {
         console.debug(e)
       }
@@ -273,7 +273,6 @@ export default {
           dealer: {}
         }
         product.dealer.id = dealers[this.randomInt(0, dealers.length - 1)].id
-        console.log(product)
         try {
           const { product: created } = (await createProduct(product)).data
           this.generatedProducts.push(created)
@@ -364,7 +363,6 @@ export default {
             }
           }
         }
-        console.log(order)
         try {
           this.generatedOrders.push((await createOrder(order)).data.order)
           successCount++

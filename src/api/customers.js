@@ -9,14 +9,14 @@ export function createCustomer(customer) {
 }
 
 export function listCustomers({ size = 10, page = 0, sort = 'id,asc' } = {}) {
+  let params = {}
+  if (size > 0) {
+    params = { size, page, sort }
+  }
   return request({
     url: '/customers',
     method: 'get',
-    params: {
-      size,
-      page,
-      sort
-    }
+    params
   })
 }
 

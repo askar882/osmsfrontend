@@ -1,6 +1,7 @@
 <template>
   <div>
-    <el-table v-loading="loading" :data="customers" height="500px">
+    <el-table v-loading="loading" :data="pagedData" max-height="500px" border>
+      <el-table-column prop="id" label="ID" width="60" />
       <el-table-column prop="name" label="姓名" />
       <el-table-column prop="gender" label="性别" width="60">
         <template slot-scope="{ row }">
@@ -11,7 +12,7 @@
       </el-table-column>
       <el-table-column prop="phone" label="电话" />
       <el-table-column prop="email" label="邮箱" />
-      <el-table-column prop="birthData" label="生日" :formatter="dateFormatter" width="150" />
+      <el-table-column prop="birthDate" label="生日" :formatter="dateFormatter" width="150" />
       <el-table-column label="地址" width="300">
         <template slot-scope="{ row }">
           <el-popover v-if="row.addresses.length > 1">
@@ -28,6 +29,16 @@
         </template>
       </el-table-column>
     </el-table>
+
+    <el-pagination
+      class="pagination"
+      layout="total, sizes, prev, pager, next, jumper"
+      :pager-count="13"
+      :page-sizes="[5, 10, 20, 50]"
+      :page-size.sync="pageSize"
+      :current-page.sync="currentPage"
+      :total="customers.length"
+    />
   </div>
 </template>
 
@@ -45,8 +56,26 @@ export default {
       required: true
     }
   },
+  data() {
+    return {
+      pageSize: 10,
+      currentPage: 1
+    }
+  },
+  computed: {
+    pagedData() {
+      const start = this.pageSize * (this.currentPage - 1)
+      return this.customers.slice(start, start + this.pageSize)
+    }
+  },
   methods: {
     dateFormatter: (row, col, val) => parseTime(val, '{y}年{m}月{d}日')
   }
 }
 </script>
+
+<style scoped>
+.pagination {
+  margin: 20px;
+}
+</style>
