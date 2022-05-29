@@ -8,7 +8,7 @@ export function createCustomer(customer) {
   })
 }
 
-export function listCustomers({ size = 10, page = 0, sort = 'id,asc' }) {
+export function listCustomers({ size = 10, page = 0, sort = 'id,asc' } = {}) {
   return request({
     url: '/customers',
     method: 'get',

@@ -14,7 +14,7 @@
         @click="addDealer"
       >添加</el-button>
     </div>
-    <el-table v-loading="tableLoading" :data="tableData" :height="500" border>
+    <el-table v-loading="tableLoading" :data="tableData" max-height="500" border>
       <el-table-column prop="id" label="ID" width="60" />
       <el-table-column prop="name" label="名称" width="200" />
       <el-table-column prop="contact" label="联系人" width="200">
@@ -47,6 +47,19 @@
         </template>
       </el-table-column>
     </el-table>
+
+    <el-pagination
+      class="pagination"
+      layout="total, sizes, prev, pager, next, jumper"
+      :pager-count="13"
+      :page-sizes="[5, 10, 20, 50]"
+      :page-size.sync="pageSize"
+      :current-page.sync="currentPage"
+      :total="totalData"
+      @size-change="getData"
+      @current-change="getData"
+    />
+
     <dealers-dialog
       :visible.sync="dialogVisible"
       :data="dialogData"
@@ -69,7 +82,11 @@ export default {
       dialogVisible: false,
       dialogData: {},
       dialogAction: 'create',
-      tableLoading: false
+      tableLoading: false,
+      totalData: 0,
+      pageSize: 10,
+      currentPage: 0,
+      tableSort: 'id,asc'
     }
   },
   created() {
@@ -79,9 +96,16 @@ export default {
     async getData() {
       this.tableLoading = true
       try {
-        const { dealers } = (await listDealers()).data
+        const { dealers, total } = (
+          await listDealers({
+            size: this.pageSize,
+            page: this.currentPage - 1,
+            sort: this.tableSort
+          })
+        ).data
         console.debug('dealers:', dealers)
         this.tableData = dealers
+        this.totalData = total
       } catch (e) {
         console.debug('Failed to list dealers:', e)
         this.$message({
@@ -98,10 +122,14 @@ export default {
     },
     async handleDelete(dealer) {
       try {
-        await this.$confirm(`是否确认删除经销商'${dealer.name}'？将删除该经销商关联的所有商品！`, '警告', {
-          confirmButtonClass: 'el-button--danger',
-          type: 'warning'
-        })
+        await this.$confirm(
+          `是否确认删除经销商'${dealer.name}'？将删除该经销商关联的所有商品！`,
+          '警告',
+          {
+            confirmButtonClass: 'el-button--danger',
+            type: 'warning'
+          }
+        )
       } catch {
         return false
       }
@@ -137,6 +165,16 @@ export default {
         message: '刷新成功',
         type: 'success'
       })
+    },
+    handleSortChange({ prop, order }) {
+      let sort = 'id,asc'
+      if (order) {
+        sort = `${prop},${order === 'ascending' ? 'asc' : 'desc'}`
+      }
+      if (sort !== this.tableSort) {
+        this.tableSort = sort
+        this.getData()
+      }
     }
   }
 }
@@ -152,5 +190,9 @@ export default {
   padding: 0 20px;
   display: flex;
   justify-content: flex-end;
+}
+
+.pagination {
+  margin: 20px;
 }
 </style>

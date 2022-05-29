@@ -8,10 +8,15 @@ export function createOrder(order) {
   })
 }
 
-export function listOrders() {
+export function listOrders({ size = 10, page = 0, sort = 'id,asc' } = {}) {
   return request({
     url: '/orders',
-    method: 'get'
+    method: 'get',
+    params: {
+      size,
+      page,
+      sort
+    }
   })
 }
 

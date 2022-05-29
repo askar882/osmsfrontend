@@ -14,12 +14,12 @@
         @click="addOrder"
       >添加</el-button>
     </div>
-    <el-table v-loading="tableLoading" :data="tableData" :height="500" border>
+    <el-table v-loading="tableLoading" :data="tableData" max-height="500" border>
       <el-table-column prop="id" label="ID" width="50" />
       <el-table-column prop="customer.name" label="客户" width="100" />
       <el-table-column prop="address" label="地址" width="300" />
-      <el-table-column prop="totalCost" label="总价" width="60" :formatter="priceFormatter" />
-      <el-table-column prop="shippingCost" label="运费" width="50" :formatter="priceFormatter" />
+      <el-table-column prop="totalCost" label="总价" width="80" :formatter="priceFormatter" />
+      <el-table-column prop="shippingCost" label="运费" width="80" :formatter="priceFormatter" />
       <el-table-column label="订单状态" width="450">
         <template slot-scope="{ row }">
           <el-steps
@@ -61,7 +61,7 @@
           </el-steps>
         </template>
       </el-table-column>
-      <el-table-column label="订单列表" width="100">
+      <el-table-column label="订单列表" width="150">
         <template slot-scope="{ row }">
           <el-popover placement="left" trigger="click">
             <el-table :data="row.orderItems" border max-height="300">
@@ -90,6 +90,19 @@
         </template>
       </el-table-column>
     </el-table>
+
+    <el-pagination
+      class="pagination"
+      layout="total, sizes, prev, pager, next, jumper"
+      :pager-count="13"
+      :page-sizes="[5, 10, 20, 50]"
+      :page-size.sync="pageSize"
+      :current-page.sync="currentPage"
+      :total="totalData"
+      @size-change="getData"
+      @current-change="getData"
+    />
+
     <orders-dialog
       :visible.sync="dialogVisible"
       :data="dialogData"
@@ -113,7 +126,11 @@ export default {
       dialogVisible: false,
       dialogData: {},
       dialogAction: 'create',
-      tableLoading: false
+      tableLoading: false,
+      totalData: 0,
+      pageSize: 10,
+      currentPage: 0,
+      tableSort: 'id,asc'
     }
   },
   created() {
@@ -123,9 +140,16 @@ export default {
     async getData() {
       this.tableLoading = true
       try {
-        const { orders } = (await listOrders()).data
+        const { orders, total } = (
+          await listOrders({
+            size: this.pageSize,
+            page: this.currentPage - 1,
+            sort: this.tableSort
+          })
+        ).data
         console.debug('orders:', orders)
         this.tableData = orders
+        this.totalData = total
       } catch (e) {
         console.debug('Failed to list orders:', e)
         this.$message({
@@ -183,7 +207,17 @@ export default {
         type: 'success'
       })
     },
-    priceFormatter: priceFormatter
+    priceFormatter: priceFormatter,
+    handleSortChange({ prop, order }) {
+      let sort = 'id,asc'
+      if (order) {
+        sort = `${prop},${order === 'ascending' ? 'asc' : 'desc'}`
+      }
+      if (sort !== this.tableSort) {
+        this.tableSort = sort
+        this.getData()
+      }
+    }
   }
 }
 </script>
@@ -198,5 +232,9 @@ export default {
   padding: 0 20px;
   display: flex;
   justify-content: flex-end;
+}
+
+.pagination {
+  margin: 20px;
 }
 </style>

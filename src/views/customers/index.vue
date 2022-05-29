@@ -80,10 +80,11 @@
     <el-pagination
       class="pagination"
       layout="total, sizes, prev, pager, next, jumper"
+      :pager-count="13"
       :page-sizes="[5, 10, 20, 50]"
       :page-size.sync="pageSize"
       :current-page.sync="currentPage"
-      :total="totalCustomers"
+      :total="totalData"
       @size-change="getData"
       @current-change="getData"
     />
@@ -115,7 +116,7 @@ export default {
       dialogData: {},
       dialogAction: 'create',
       tableLoading: false,
-      totalCustomers: 0,
+      totalData: 0,
       pageSize: 10,
       currentPage: 0,
       tableSort: 'id,asc'
@@ -140,7 +141,7 @@ export default {
         ).data
         console.debug('customers:', customers)
         this.tableData = customers
-        this.totalCustomers = total
+        this.totalData = total
       } catch (e) {
         console.debug('Failed to list customers:', e)
         this.$message({

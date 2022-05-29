@@ -8,10 +8,15 @@ export function createDealer(dealer) {
   })
 }
 
-export function listDealers() {
+export function listDealers({ size = 10, page = 0, sort = 'id,asc' } = {}) {
   return request({
     url: '/dealers',
-    method: 'get'
+    method: 'get',
+    params: {
+      size,
+      page,
+      sort
+    }
   })
 }
 

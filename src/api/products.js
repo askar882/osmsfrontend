@@ -8,10 +8,15 @@ export function createProduct(product) {
   })
 }
 
-export function listProducts() {
+export function listProducts({ size = 10, page = 0, sort = 'id,asc' } = {}) {
   return request({
     url: '/products',
-    method: 'get'
+    method: 'get',
+    params: {
+      size,
+      page,
+      sort
+    }
   })
 }
 

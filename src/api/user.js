@@ -27,10 +27,15 @@ export function createUser(user) {
   })
 }
 
-export function listUsers() {
+export function listUsers({ size = 10, page = 0, sort = 'id,asc' } = {}) {
   return request({
     url: '/users',
-    method: 'get'
+    method: 'get',
+    params: {
+      size,
+      page,
+      sort
+    }
   })
 }
 

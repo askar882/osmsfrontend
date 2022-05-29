@@ -14,7 +14,12 @@
         @click="addUser"
       >添加</el-button>
     </div>
-    <el-table v-loading="tableLoading" :data="tableData" :height="500" border>
+    <el-table
+      v-loading="tableLoading"
+      :data="tableData"
+      max-height="500"
+      border
+    >
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="username" label="用户名" width="200" />
       <el-table-column label="角色" width="100">
@@ -76,6 +81,18 @@
       </el-table-column>
     </el-table>
 
+    <el-pagination
+      class="pagination"
+      layout="total, sizes, prev, pager, next, jumper"
+      :pager-count="13"
+      :page-sizes="[5, 10, 20, 50]"
+      :page-size.sync="pageSize"
+      :current-page.sync="currentPage"
+      :total="totalData"
+      @size-change="getData"
+      @current-change="getData"
+    />
+
     <users-dialog
       :visible.sync="dialogVisible"
       :data="dialogData"
@@ -99,7 +116,11 @@ export default {
       dialogVisible: false,
       dialogData: {},
       dialogAction: 'create',
-      tableLoading: false
+      tableLoading: false,
+      totalData: 0,
+      pageSize: 10,
+      currentPage: 0,
+      tableSort: 'id,asc'
     }
   },
   created() {
@@ -109,10 +130,17 @@ export default {
     async getData() {
       this.tableLoading = true
       try {
-        const { users, online } = (await listUsers()).data
+        const { users, total, online } = (
+          await listUsers({
+            size: this.pageSize,
+            page: this.currentPage - 1,
+            sort: this.tableSort
+          })
+        ).data
         users.forEach((user) => (user.online = online.includes(user.id)))
         console.debug('users:', users)
         this.tableData = users
+        this.totalData = total
       } catch (e) {
         console.debug('Failed to list users:', e)
         this.$message({
@@ -197,6 +225,16 @@ export default {
         message: '刷新成功',
         type: 'success'
       })
+    },
+    handleSortChange({ prop, order }) {
+      let sort = 'id,asc'
+      if (order) {
+        sort = `${prop},${order === 'ascending' ? 'asc' : 'desc'}`
+      }
+      if (sort !== this.tableSort) {
+        this.tableSort = sort
+        this.getData()
+      }
     }
   }
 }
@@ -212,5 +250,9 @@ export default {
   padding: 0 20px;
   display: flex;
   justify-content: flex-end;
+}
+
+.pagination {
+  margin: 20px;
 }
 </style>
