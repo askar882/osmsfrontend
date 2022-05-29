@@ -8,10 +8,13 @@ export function createProduct(product) {
   })
 }
 
-export function listProducts({ size = 10, page = 0, sort = 'id,asc' } = {}) {
+export function listProducts({ size = 10, page = 0, sort = 'id,asc', dealers = [] } = {}) {
   let params = {}
   if (size > 0) {
     params = { size, page, sort }
+  }
+  if (dealers.length > 0) {
+    params.dealers = dealers.join(',')
   }
   return request({
     url: '/products',

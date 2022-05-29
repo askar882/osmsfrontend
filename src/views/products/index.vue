@@ -20,6 +20,7 @@
       max-height="500"
       border
       @sort-change="handleSortChange"
+      @filter-change="handleFilterChange"
     >
       <el-table-column prop="id" label="ID" width="60" sortable="custom" />
       <el-table-column prop="name" label="名称" width="200" sortable="custom" />
@@ -32,7 +33,7 @@
         sortable="custom"
         :formatter="priceFormatter"
       />
-      <el-table-column label="经销商" width="150">
+      <el-table-column label="经销商" width="150" :filters="dealerFilters" column-key="dealers">
         <template slot-scope="{ row }">
           <el-tooltip placement="top">
             <div slot="content">ID: {{ row.dealer.id }}</div>
@@ -83,6 +84,7 @@
 import ProductsDialog from './components/ProductsDialog'
 import { listProducts, deleteProduct } from '@/api/products'
 import { priceFormatter } from '@/utils'
+import { listDealers } from '@/api/dealers'
 
 export default {
   name: 'Products',
@@ -97,10 +99,13 @@ export default {
       totalData: 0,
       pageSize: 10,
       currentPage: 0,
-      tableSort: 'id,asc'
+      tableSort: 'id,asc',
+      dealerFilters: [],
+      selectedDealers: []
     }
   },
   created() {
+    this.getDealers()
     this.getData()
   },
   methods: {
@@ -111,7 +116,8 @@ export default {
           await listProducts({
             size: this.pageSize,
             page: this.currentPage - 1,
-            sort: this.tableSort
+            sort: this.tableSort,
+            dealers: this.selectedDealers
           })
         ).data
         console.debug('products:', products)
@@ -183,6 +189,18 @@ export default {
         this.tableSort = sort
         this.getData()
       }
+    },
+    async getDealers() {
+      try {
+        const { dealers } = (await listDealers({ size: 0 })).data
+        this.dealerFilters = dealers.map(dealer => ({ text: dealer.name, value: dealer.id }))
+      } catch (e) {
+        console.debug(e)
+      }
+    },
+    handleFilterChange({ dealers }) {
+      this.selectedDealers = dealers
+      this.getData()
     }
   }
 }
