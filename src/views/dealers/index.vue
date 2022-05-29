@@ -14,9 +14,15 @@
         @click="addDealer"
       >添加</el-button>
     </div>
-    <el-table v-loading="tableLoading" :data="tableData" max-height="500" border>
-      <el-table-column prop="id" label="ID" width="60" />
-      <el-table-column prop="name" label="名称" width="200" />
+    <el-table
+      v-loading="tableLoading"
+      :data="tableData"
+      max-height="500"
+      border
+      @sort-change="handleSortChange"
+    >
+      <el-table-column prop="id" label="ID" width="60" sortable="custom" />
+      <el-table-column prop="name" label="名称" width="200" sortable="custom" />
       <el-table-column prop="contact" label="联系人" width="200">
         <template slot-scope="{ row }">
           <el-popover trigger="hover" placement="top">
@@ -28,8 +34,13 @@
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column prop="phone" label="联系电话" width="200" />
-      <el-table-column prop="address" label="地址" width="400" />
+      <el-table-column
+        prop="phone"
+        label="联系电话"
+        width="200"
+        sortable="custom"
+      />
+      <el-table-column prop="address" label="地址" width="400" sortable="custom" />
       <el-table-column label="操作" width="200" fixed="right">
         <template slot-scope="{ row }">
           <el-button

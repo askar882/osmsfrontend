@@ -14,12 +14,40 @@
         @click="addOrder"
       >添加</el-button>
     </div>
-    <el-table v-loading="tableLoading" :data="tableData" max-height="500" border>
-      <el-table-column prop="id" label="ID" width="50" />
-      <el-table-column prop="customer.name" label="客户" width="100" />
-      <el-table-column prop="address" label="地址" width="300" />
-      <el-table-column prop="totalCost" label="总价" width="80" :formatter="priceFormatter" />
-      <el-table-column prop="shippingCost" label="运费" width="80" :formatter="priceFormatter" />
+    <el-table
+      v-loading="tableLoading"
+      :data="tableData"
+      max-height="500"
+      border
+      @sort-change="handleSortChange"
+    >
+      <el-table-column prop="id" label="ID" width="60" sortable="custom" />
+      <el-table-column
+        prop="customer.name"
+        label="客户"
+        width="100"
+        sortable="custom"
+      />
+      <el-table-column
+        prop="address"
+        label="地址"
+        width="300"
+        sortable="custom"
+      />
+      <el-table-column
+        prop="totalCost"
+        label="总价"
+        width="80"
+        sortable="custom"
+        :formatter="priceFormatter"
+      />
+      <el-table-column
+        prop="shippingCost"
+        label="运费"
+        width="80"
+        sortable="custom"
+        :formatter="priceFormatter"
+      />
       <el-table-column label="订单状态" width="450">
         <template slot-scope="{ row }">
           <el-steps
@@ -66,7 +94,11 @@
           <el-popover placement="left" trigger="click">
             <el-table :data="row.orderItems" border max-height="300">
               <el-table-column label="产品" prop="product.name" />
-              <el-table-column label="单价" prop="price" :formatter="priceFormatter" />
+              <el-table-column
+                label="单价"
+                prop="price"
+                :formatter="priceFormatter"
+              />
               <el-table-column label="数量" prop="count" />
             </el-table>
             <el-button slot="reference">点击查看</el-button>
@@ -166,10 +198,14 @@ export default {
     },
     async handleDelete(order) {
       try {
-        await this.$confirm(`是否确认删除客户'${order.name}'？`, '提示', {
-          confirmButtonClass: 'el-button--danger',
-          type: 'warning'
-        })
+        await this.$confirm(
+          `是否确认删除客户'${order.customer.name}'的ID为'${order.id}的订单？`,
+          '警告',
+          {
+            confirmButtonClass: 'el-button--danger',
+            type: 'warning'
+          }
+        )
       } catch {
         return false
       }

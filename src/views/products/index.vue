@@ -19,15 +19,17 @@
       :data="tableData"
       max-height="500"
       border
+      @sort-change="handleSortChange"
     >
-      <el-table-column prop="id" label="ID" width="60" />
-      <el-table-column prop="name" label="名称" width="200" />
-      <el-table-column prop="code" label="代码" width="200" />
-      <el-table-column prop="description" label="详情" width="400" />
+      <el-table-column prop="id" label="ID" width="60" sortable="custom" />
+      <el-table-column prop="name" label="名称" width="200" sortable="custom" />
+      <el-table-column prop="code" label="代码" width="200" sortable="custom" />
+      <el-table-column prop="description" label="详情" width="400" sortable="custom" />
       <el-table-column
         prop="price"
         label="单价"
-        width="60"
+        width="80"
+        sortable="custom"
         :formatter="priceFormatter"
       />
       <el-table-column label="经销商" width="150">
