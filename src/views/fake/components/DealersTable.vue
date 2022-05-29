@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-table v-loading="loading" :data="pagedData" max-height="500px" border>
+    <el-table v-loading="loading" :data="pagedData" height="500" border>
       <el-table-column prop="id" label="ID" width="60" />
       <el-table-column prop="name" label="名称" />
       <el-table-column prop="contact.name" label="联系人姓名" />

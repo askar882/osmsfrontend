@@ -17,7 +17,7 @@
     <el-table
       v-loading="tableLoading"
       :data="tableData"
-      max-height="500"
+      height="500"
       border
     >
       <el-table-column prop="id" label="ID" width="80" />

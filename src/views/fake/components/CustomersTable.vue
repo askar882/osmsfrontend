@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-table v-loading="loading" :data="pagedData" max-height="500px" border>
+    <el-table v-loading="loading" :data="pagedData" height="500" border>
       <el-table-column prop="id" label="ID" width="60" />
       <el-table-column prop="name" label="姓名" />
       <el-table-column prop="gender" label="性别" width="60">

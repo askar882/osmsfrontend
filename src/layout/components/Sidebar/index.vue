@@ -38,7 +38,8 @@ export default {
       if (meta.activeMenu) {
         return meta.activeMenu
       }
-      return path
+      // 删除结尾的斜杠(trailing slash)，解决页面刷新后自动添加结尾斜杠，导致ElMenu无法显示激活状态的问题。
+      return path.replace(/\/$/, '')
     },
     showLogo() {
       return this.$store.state.settings.sidebarLogo
