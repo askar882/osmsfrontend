@@ -1,6 +1,6 @@
 import Layout from '@/layout'
 
-let dataGenerator = {
+export default {
   path: '/data-generator',
   component: Layout,
   meta: {
@@ -18,9 +18,3 @@ let dataGenerator = {
     }
   ]
 }
-
-if (process.env.NODE_ENV !== 'development') {
-  dataGenerator = {}
-}
-
-export default dataGenerator
