@@ -1,5 +1,5 @@
 <template>
-  <el-row :gutter="40" type="flex" justify="space-around" class="panel-group">
+  <el-row :gutter="gutter" type="flex" justify="space-around" class="panel-group">
     <el-col :xs="12" :sm="12" :lg="span" class="card-panel-col">
       <div class="card-panel" @click="selectionChanged('dealer')">
         <div class="card-panel-icon-wrapper icon-dealer">
@@ -16,6 +16,7 @@
         </div>
       </div>
     </el-col>
+
     <el-col :xs="12" :sm="12" :lg="span" class="card-panel-col">
       <div class="card-panel" @click="selectionChanged('customers')">
         <div class="card-panel-icon-wrapper icon-customer">
@@ -32,6 +33,7 @@
         </div>
       </div>
     </el-col>
+
     <el-col :xs="12" :sm="12" :lg="span" class="card-panel-col">
       <div class="card-panel" @click="selectionChanged('products')">
         <div class="card-panel-icon-wrapper icon-product">
@@ -48,6 +50,7 @@
         </div>
       </div>
     </el-col>
+
     <el-col :xs="12" :sm="12" :lg="span" class="card-panel-col">
       <div class="card-panel" @click="selectionChanged('orders')">
         <div class="card-panel-icon-wrapper icon-order">
@@ -64,7 +67,8 @@
         </div>
       </div>
     </el-col>
-    <el-col :xs="12" :sm="12" :lg="span" class="card-panel-col">
+
+    <el-col v-if="$store.getters.admin" :xs="12" :sm="12" :lg="span" class="card-panel-col">
       <div class="card-panel" @click="selectionChanged('users')">
         <div class="card-panel-icon-wrapper icon-user">
           <svg-icon icon-class="user" class-name="card-panel-icon" />
@@ -97,6 +101,9 @@ export default {
   computed: {
     span() {
       return this.$store.getters.admin ? 4 : 6
+    },
+    gutter() {
+      return this.$store.getters.admin ? 0 : 40
     }
   },
   methods: {

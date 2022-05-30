@@ -5,9 +5,6 @@
       @selectionChanged="handlePanelSelected"
     />
 
-    <!-- 月销售额 -->
-    <!-- <sales-chart /> -->
-
     <el-row :gutter="32">
       <!-- 经销商市场占比饼图 -->
       <el-col :xs="24" :sm="24" :lg="12">
@@ -17,11 +14,11 @@
       </el-col>
 
       <!-- 订单状态分布饼图 -->
-      <!-- <el-col :xs="24" :sm="24" :lg="12">
+      <el-col :xs="24" :sm="24" :lg="12">
         <div class="chart-wrapper">
-          <status-chart />
+          <states-chart />
         </div>
-      </el-col> -->
+      </el-col>
     </el-row>
 
     <el-row>
@@ -35,11 +32,7 @@
 
     <!-- 最新订单 -->
     <el-row style="background: #fff; padding: 16px 16px 0; margin-bottom: 32px">
-      <latest-orders
-        :type.sync="selectedPanel"
-        :data="latestData"
-        :loading.sync="loading"
-      />
+      <latest-orders :orders="latestOrders" :loading.sync="loading" />
     </el-row>
   </div>
 </template>
@@ -49,6 +42,7 @@ import PanelGroup from './components/PanelGroup'
 import LatestOrders from './components/LatestOrders'
 import DealersChart from './components/DealersChart'
 import ProductsChart from './components/ProductsChart'
+import StatesChart from './components/StatesChart'
 import { isGuided, guide } from '@/utils/guide'
 import { listDealers } from '@/api/dealers'
 import { listCustomers } from '@/api/customers'
@@ -62,7 +56,8 @@ export default {
     PanelGroup,
     LatestOrders,
     DealersChart,
-    ProductsChart
+    ProductsChart,
+    StatesChart
   },
   data() {
     return {
@@ -70,7 +65,7 @@ export default {
       loadingService: this.$loading(),
       loading: true,
       selectedPanel: 'customers',
-      latestData: {}
+      latestOrders: []
     }
   },
   watch: {
@@ -96,10 +91,10 @@ export default {
     },
     async getData() {
       this.loading = true
-      const dealersData = (await listDealers({ sort: '' })).data
-      const customersData = (await listCustomers()).data
-      const productsData = (await listProducts()).data
-      const ordersData = (await listOrders()).data
+      const dealersData = (await listDealers({ size: 1 })).data
+      const customersData = (await listCustomers({ size: 1 })).data
+      const productsData = (await listProducts({ size: 1 })).data
+      const ordersData = (await listOrders({ sort: 'orderTime,desc' })).data
       let usersData = { total: 0, users: [] }
       if (this.$store.getters.admin) {
         usersData = (await listUsers()).data
@@ -111,13 +106,7 @@ export default {
         order: ordersData.total,
         user: usersData.total
       }
-      this.latestData = {
-        dealers: dealersData.dealers,
-        customers: customersData.customers,
-        products: productsData.products,
-        orders: ordersData.orders,
-        users: usersData.users
-      }
+      this.latestOrders = ordersData.orders
       this.loading = false
     }
   }

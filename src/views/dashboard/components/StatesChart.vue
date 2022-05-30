@@ -7,7 +7,6 @@ import echarts from 'echarts'
 require('echarts/theme/macarons') // echarts theme
 import resize from './mixins/resize'
 import statistics from '@/api/statistics'
-import { priceFormatter } from '@/utils'
 
 export default {
   mixins: [resize],
@@ -28,20 +27,30 @@ export default {
   data() {
     return {
       chart: null,
-      chartData: []
+      chartData: [],
+      states: {
+        ordered: '已下单',
+        shipping: '运输',
+        delivered: '已收货'
+      },
+      colorPalette: ['#ff71ce', '#05ffa1', '#01cdfe']
     }
   },
   computed: {
     legendData() {
-      return this.chartData.map(data => data.name)
+      return this.chartData.map((data) => data.name)
     }
   },
   async created() {
     try {
-      const { dealers } = (await statistics({ name: 'dealers', top: 10 })).data
-      this.chartData = dealers.map((dealer) => ({
-        name: dealer.dealer.name,
-        value: priceFormatter(null, null, dealer.expense)
+      const { states } = (await statistics({ name: 'orderStates', top: 10 }))
+        .data
+      this.chartData = Object.keys(states).map((state, index) => ({
+        name: this.states[state],
+        value: states[state],
+        itemStyle: {
+          color: this.colorPalette[index]
+        }
       }))
       // 如果已加载，重新加载
       if (this.chart) {
@@ -49,7 +58,7 @@ export default {
       }
     } catch (e) {
       console.debug(e)
-      this.$message('获取经销商统计数据失败')
+      this.$message('获取订单状态统计数据失败')
     }
   },
   mounted() {
@@ -69,7 +78,7 @@ export default {
     initChart() {
       this.chart.setOption({
         title: {
-          text: '经销商Top 10销售额占比',
+          text: '订单状态分布',
           left: 'center'
         },
         tooltip: {
@@ -84,7 +93,7 @@ export default {
         },
         series: [
           {
-            name: '经销商总销售额占比',
+            name: '订单状态分布',
             type: 'pie',
             roseType: 'radius',
             radius: [30, 150],

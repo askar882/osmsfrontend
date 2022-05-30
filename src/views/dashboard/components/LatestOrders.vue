@@ -1,5 +1,5 @@
 <template>
-  <el-table v-loading="loading" :data="data.orders" height="300">
+  <el-table v-loading="loading" :data="orders">
     <el-table-column prop="customer.id" label="ID" width="60" />
     <el-table-column prop="customer.name" label="客户" width="100" />
     <el-table-column prop="address" label="地址" />
@@ -80,8 +80,8 @@ import { parseTime, priceFormatter } from '@/utils'
 
 export default {
   props: {
-    data: {
-      type: Object,
+    orders: {
+      type: Array,
       required: true
     },
     loading: {
@@ -89,12 +89,9 @@ export default {
       required: true
     }
   },
-  data() {
-    return {}
-  },
   methods: {
-    dateFormatter: (row, col, val) => parseTime(val, '{y}年{m}月{d}日'),
-    priceFormatter: priceFormatter
+    parseTime,
+    priceFormatter
   }
 }
 </script>
