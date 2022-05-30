@@ -87,7 +87,7 @@ export default {
             name: '经销商总销售额占比',
             type: 'pie',
             roseType: 'radius',
-            radius: [30, 150],
+            radius: ['10%', '70%'],
             center: ['50%', '50%'],
             data: this.chartData,
             animationEasing: 'cubicInOut',

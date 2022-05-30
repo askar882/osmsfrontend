@@ -95,9 +95,12 @@ export default {
           {
             name: '订单状态分布',
             type: 'pie',
-            roseType: 'radius',
-            radius: [30, 150],
-            center: ['50%', '50%'],
+            radius: ['40%', '70%'],
+            avoidLabelOverlap: false,
+            itemStyle: {
+              borderColor: '#fff',
+              borderWidth: 2
+            },
             data: this.chartData,
             animationEasing: 'cubicInOut',
             animationDuration: 2600
