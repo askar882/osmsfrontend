@@ -6,7 +6,7 @@
     />
 
     <!-- 月销售额 -->
-    <sales-chart />
+    <!-- <sales-chart /> -->
 
     <el-row :gutter="32">
       <!-- 经销商市场占比饼图 -->
@@ -17,18 +17,18 @@
       </el-col>
 
       <!-- 订单状态分布饼图 -->
-      <el-col :xs="24" :sm="24" :lg="12">
+      <!-- <el-col :xs="24" :sm="24" :lg="12">
         <div class="chart-wrapper">
-          <pie-chart />
+          <status-chart />
         </div>
-      </el-col>
+      </el-col> -->
     </el-row>
 
     <el-row>
       <!-- 热销商品排行柱状图 -->
-      <el-col :xs="24" :sm="24" :lg="8">
+      <el-col :span="24">
         <div class="chart-wrapper">
-          <bar-chart />
+          <products-chart />
         </div>
       </el-col>
     </el-row>
@@ -48,8 +48,7 @@
 import PanelGroup from './components/PanelGroup'
 import LatestOrders from './components/LatestOrders'
 import DealersChart from './components/DealersChart'
-import PieChart from './components/PieChart'
-import BarChart from './components/BarChart'
+import ProductsChart from './components/ProductsChart'
 import { isGuided, guide } from '@/utils/guide'
 import { listDealers } from '@/api/dealers'
 import { listCustomers } from '@/api/customers'
@@ -63,8 +62,7 @@ export default {
     PanelGroup,
     LatestOrders,
     DealersChart,
-    PieChart,
-    BarChart
+    ProductsChart
   },
   data() {
     return {
@@ -102,21 +100,23 @@ export default {
       const customersData = (await listCustomers()).data
       const productsData = (await listProducts()).data
       const ordersData = (await listOrders()).data
+      let usersData = { total: 0, users: [] }
+      if (this.$store.getters.admin) {
+        usersData = (await listUsers()).data
+      }
       this.dataCount = {
         dealer: dealersData.total,
         customer: customersData.total,
         product: productsData.total,
-        order: ordersData.total
-      }
-      if (this.$store.getters.admin) {
-        const usersData = (await listUsers()).data
-        this.dataCount.user = usersData.total
+        order: ordersData.total,
+        user: usersData.total
       }
       this.latestData = {
         dealers: dealersData.dealers,
         customers: customersData.customers,
         products: productsData.products,
-        orders: ordersData.orders
+        orders: ordersData.orders,
+        users: usersData.users
       }
       this.loading = false
     }

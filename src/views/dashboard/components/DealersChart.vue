@@ -22,7 +22,7 @@ export default {
     },
     height: {
       type: String,
-      default: '400px'
+      default: '500px'
     }
   },
   data() {
@@ -68,6 +68,13 @@ export default {
   methods: {
     initChart() {
       this.chart.setOption({
+        title: {
+          text: '经销商Top 10销售额占比',
+          left: 'center',
+          textStyle: {
+            color: '#bf9b30'
+          }
+        },
         tooltip: {
           trigger: 'item',
           formatter: '{a} <br/>{b} : {c} ({d}%)'
@@ -83,7 +90,7 @@ export default {
             name: '经销商总销售额占比',
             type: 'pie',
             roseType: 'radius',
-            radius: [20, 120],
+            radius: [30, 150],
             center: ['50%', '50%'],
             data: this.chartData,
             animationEasing: 'cubicInOut',
