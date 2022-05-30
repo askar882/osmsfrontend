@@ -86,7 +86,7 @@ export default {
       return [
         { label: '用户名', value: this.user.name },
         { label: '用户ID', value: this.user.id },
-        { label: '角色', value: this.user.roles.includes('ADMIN') ? '管理员' : '用户' },
+        { label: '角色', value: this.$store.getters.admin ? '管理员' : '用户' },
         { label: '创建时间', value: parseTime(this.user.creation) },
         { label: '修改时间', value: parseTime(this.user.modification) },
         { label: 'Token过期时间', value: parseTime(this.user.expiration) }

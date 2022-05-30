@@ -102,13 +102,15 @@ export default {
       const customersData = (await listCustomers()).data
       const productsData = (await listProducts()).data
       const ordersData = (await listOrders()).data
-      const usersData = (await listUsers()).data
       this.dataCount = {
         dealer: dealersData.total,
         customer: customersData.total,
         product: productsData.total,
-        order: ordersData.total,
-        user: usersData.total
+        order: ordersData.total
+      }
+      if (this.$store.getters.admin) {
+        const usersData = (await listUsers()).data
+        this.dataCount.user = usersData.total
       }
       this.latestData = {
         dealers: dealersData.dealers,

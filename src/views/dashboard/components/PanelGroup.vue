@@ -96,7 +96,7 @@ export default {
   },
   computed: {
     span() {
-      return this.$store.getters.roles.includes('ADMIN') ? 4 : 6
+      return this.$store.getters.admin ? 4 : 6
     }
   },
   methods: {

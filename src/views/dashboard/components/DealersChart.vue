@@ -37,7 +37,6 @@ export default {
     }
   },
   async created() {
-    console.debug('created')
     try {
       const { dealers } = (await statistics({ name: 'dealers', top: 10 })).data
       this.chartData = dealers.map((dealer) => ({
