@@ -33,24 +33,14 @@ export default {
   },
   computed: {
     legendData() {
-      return this.chartData.map(data => data.name)
+      return this.chartData.map((data) => data.name)
     }
   },
-  async created() {
-    try {
-      const { dealers } = (await statistics({ name: 'dealers', top: 10 })).data
-      this.chartData = dealers.map((dealer) => ({
-        name: dealer.dealer.name,
-        value: priceFormatter(null, null, dealer.expense)
-      }))
-      // 如果已加载，重新加载
-      if (this.chart) {
-        this.initChart()
-      }
-    } catch (e) {
-      console.debug(e)
-      this.$message('获取经销商统计数据失败')
-    }
+  activated() {
+    this.getData()
+  },
+  created() {
+    this.getData()
   },
   mounted() {
     this.$nextTick(() => {
@@ -95,6 +85,22 @@ export default {
           }
         ]
       })
+    },
+    async getData() {
+      try {
+        const { dealers } = (await statistics({ name: 'dealers', top: 10 }))
+          .data
+        this.chartData = dealers.map((dealer) => ({
+          name: dealer.dealer.name,
+          value: priceFormatter(null, null, dealer.expense)
+        }))
+        if (this.chart) {
+          this.initChart()
+        }
+      } catch (e) {
+        console.debug(e)
+        this.$message('获取经销商统计数据失败')
+      }
     }
   }
 }

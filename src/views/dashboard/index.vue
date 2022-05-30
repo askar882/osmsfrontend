@@ -77,6 +77,9 @@ export default {
       }
     }
   },
+  activated() {
+    this.getData()
+  },
   created() {
     this.getData()
   },

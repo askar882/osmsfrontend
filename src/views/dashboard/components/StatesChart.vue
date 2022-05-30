@@ -41,25 +41,11 @@ export default {
       return this.chartData.map((data) => data.name)
     }
   },
-  async created() {
-    try {
-      const { states } = (await statistics({ name: 'orderStates', top: 10 }))
-        .data
-      this.chartData = Object.keys(states).map((state, index) => ({
-        name: this.states[state],
-        value: states[state],
-        itemStyle: {
-          color: this.colorPalette[index]
-        }
-      }))
-      // 如果已加载，重新加载
-      if (this.chart) {
-        this.initChart()
-      }
-    } catch (e) {
-      console.debug(e)
-      this.$message('获取订单状态统计数据失败')
-    }
+  activated() {
+    this.getData()
+  },
+  created() {
+    this.getData()
   },
   mounted() {
     this.$nextTick(() => {
@@ -107,6 +93,25 @@ export default {
           }
         ]
       })
+    },
+    async getData() {
+      try {
+        const { states } = (await statistics({ name: 'orderStates', top: 10 }))
+          .data
+        this.chartData = Object.keys(states).map((state, index) => ({
+          name: this.states[state],
+          value: states[state],
+          itemStyle: {
+            color: this.colorPalette[index]
+          }
+        }))
+        if (this.chart) {
+          this.initChart()
+        }
+      } catch (e) {
+        console.debug(e)
+        this.$message('获取订单状态统计数据失败')
+      }
     }
   }
 }

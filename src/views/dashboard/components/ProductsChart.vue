@@ -63,19 +63,11 @@ export default {
       }))
     }
   },
-  async created() {
-    try {
-      this.products = (
-        await statistics({ name: 'products', top: 10 })
-      ).data.products
-      // 如果已加载，重新加载
-      if (this.chart) {
-        this.initChart()
-      }
-    } catch (e) {
-      console.debug(e)
-      this.$message('获取经销商统计数据失败')
-    }
+  activated() {
+    this.getData()
+  },
+  created() {
+    this.getData()
   },
   mounted() {
     this.$nextTick(() => {
@@ -155,6 +147,20 @@ export default {
           }
         ]
       })
+    },
+    async getData() {
+      try {
+        this.products = (
+          await statistics({ name: 'products', top: 10 })
+        ).data.products
+        // 如果已加载，重新加载
+        if (this.chart) {
+          this.initChart()
+        }
+      } catch (e) {
+        console.debug(e)
+        this.$message('获取经销商统计数据失败')
+      }
     }
   }
 }
