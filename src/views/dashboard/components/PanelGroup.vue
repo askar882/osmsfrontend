@@ -1,63 +1,79 @@
 <template>
-  <el-row :gutter="40" class="panel-group">
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+  <el-row :gutter="40" type="flex" justify="space-around" class="panel-group">
+    <el-col :xs="12" :sm="12" :lg="span" class="card-panel-col">
       <div class="card-panel" @click="selectionChanged('dealer')">
-        <div class="card-panel-icon-wrapper icon-message">
+        <div class="card-panel-icon-wrapper icon-dealer">
           <svg-icon icon-class="dealer" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">经销商</div>
           <count-to
             :start-val="0"
-            :end-val="dataCount.dealer"
+            :end-val="dataCount.dealer || 0"
             :duration="3000"
             class="card-panel-num"
           />
         </div>
       </div>
     </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="selectionChanged('customer')">
-        <div class="card-panel-icon-wrapper icon-people">
-          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
+    <el-col :xs="12" :sm="12" :lg="span" class="card-panel-col">
+      <div class="card-panel" @click="selectionChanged('customers')">
+        <div class="card-panel-icon-wrapper icon-customer">
+          <svg-icon icon-class="customer" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">客户</div>
           <count-to
             :start-val="0"
-            :end-val="dataCount.customer"
+            :end-val="dataCount.customer || 0"
             :duration="2600"
             class="card-panel-num"
           />
         </div>
       </div>
     </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="selectionChanged('product')">
-        <div class="card-panel-icon-wrapper icon-money">
+    <el-col :xs="12" :sm="12" :lg="span" class="card-panel-col">
+      <div class="card-panel" @click="selectionChanged('products')">
+        <div class="card-panel-icon-wrapper icon-product">
           <svg-icon icon-class="product" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">商品</div>
           <count-to
             :start-val="0"
-            :end-val="dataCount.product"
+            :end-val="dataCount.product || 0"
             :duration="3200"
             class="card-panel-num"
           />
         </div>
       </div>
     </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="selectionChanged('order')">
-        <div class="card-panel-icon-wrapper icon-shopping">
+    <el-col :xs="12" :sm="12" :lg="span" class="card-panel-col">
+      <div class="card-panel" @click="selectionChanged('orders')">
+        <div class="card-panel-icon-wrapper icon-order">
           <svg-icon icon-class="shopping" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">订单</div>
           <count-to
             :start-val="0"
-            :end-val="dataCount.order"
+            :end-val="dataCount.order || 0"
+            :duration="3600"
+            class="card-panel-num"
+          />
+        </div>
+      </div>
+    </el-col>
+    <el-col :xs="12" :sm="12" :lg="span" class="card-panel-col">
+      <div class="card-panel" @click="selectionChanged('users')">
+        <div class="card-panel-icon-wrapper icon-user">
+          <svg-icon icon-class="user" class-name="card-panel-icon" />
+        </div>
+        <div class="card-panel-description">
+          <div class="card-panel-text">用户</div>
+          <count-to
+            :start-val="0"
+            :end-val="dataCount.user || 0"
             :duration="3600"
             class="card-panel-num"
           />
@@ -75,7 +91,12 @@ export default {
   props: {
     dataCount: {
       type: Object,
-      default: () => ({ customer: 0, dealer: 0, product: 0, order: 0 })
+      required: true
+    }
+  },
+  computed: {
+    span() {
+      return this.$store.getters.roles.includes('ADMIN') ? 4 : 6
     }
   },
   methods: {
@@ -110,37 +131,45 @@ export default {
         color: #fff;
       }
 
-      .icon-people {
+      .icon-customer {
         background: #40c9c6;
       }
 
-      .icon-message {
+      .icon-dealer {
         background: #36a3f7;
       }
 
-      .icon-money {
+      .icon-product {
         background: #f4516c;
       }
 
-      .icon-shopping {
+      .icon-order {
         background: #34bfa3;
+      }
+
+      .icon-user {
+        background: #3f51b5;
       }
     }
 
-    .icon-people {
+    .icon-customer {
       color: #40c9c6;
     }
 
-    .icon-message {
+    .icon-dealer {
       color: #36a3f7;
     }
 
-    .icon-money {
+    .icon-product {
       color: #f4516c;
     }
 
-    .icon-shopping {
+    .icon-order {
       color: #34bfa3;
+    }
+
+    .icon-user {
+      color: #3f51b5;
     }
 
     .card-panel-icon-wrapper {
