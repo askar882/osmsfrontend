@@ -20,4 +20,5 @@ RUN npm run build
 FROM nginx:stable-alpine AS production
 RUN mkdir /app
 COPY --from=builder /app/dist /app
-COPY nginx.conf /etc/nginx/nginx.conf
+RUN mkdir /etc/nginx/templates
+COPY nginx.conf.template /etc/nginx/templates/default.conf.template
