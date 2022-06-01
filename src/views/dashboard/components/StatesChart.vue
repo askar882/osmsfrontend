@@ -98,13 +98,18 @@ export default {
       try {
         const { states } = (await statistics({ name: 'orderStates', top: 10 }))
           .data
-        this.chartData = Object.keys(states).map((state, index) => ({
+        const data = Object.keys(states).map((state, index) => ({
           name: this.states[state],
           value: states[state],
           itemStyle: {
             color: this.colorPalette[index]
           }
         }))
+        // 数据都为零时不加载图表
+        if (data.every(state => state.value === 0)) {
+          return
+        }
+        this.chartData = data
         if (this.chart) {
           this.initChart()
         }

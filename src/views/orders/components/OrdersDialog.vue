@@ -123,7 +123,7 @@
             type="primary"
             size="mini"
             icon="el-icon-plus"
-            :disabled="action === 'edit' || filteredProducts.length < 1"
+            :disabled="action === 'edit' || availableProducts.length < 1"
             @click="addOrderItem(index)"
           />
         </el-col>
@@ -140,7 +140,11 @@
 
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item v-show="action === 'edit'" label="发货时间" prop="shipmentTime">
+          <el-form-item
+            v-show="action === 'edit'"
+            label="发货时间"
+            prop="shipmentTime"
+          >
             <el-date-picker
               v-model="formData.shipmentTime"
               type="datetime"
@@ -151,12 +155,22 @@
         </el-col>
 
         <el-col :span="12">
-          <el-form-item v-show="action === 'edit'" label="收货时间" prop="deliveryTime">
+          <el-form-item
+            v-show="action === 'edit'"
+            label="收货时间"
+            prop="deliveryTime"
+          >
             <el-date-picker
               v-model="formData.deliveryTime"
               type="datetime"
-              :placeholder="formData.shipmentTime === null ? '先选择发货时间' : '选择收货时间'"
-              :disabled="data.deliveryTime !== null || formData.shipmentTime === null"
+              :placeholder="
+                formData.shipmentTime === null
+                  ? '先选择发货时间'
+                  : '选择收货时间'
+              "
+              :disabled="
+                data.deliveryTime !== null || formData.shipmentTime === null
+              "
             />
           </el-form-item>
         </el-col>
@@ -242,16 +256,17 @@ export default {
         this.$emit('update:visible', val)
       }
     },
-    filteredProducts() {
+    availableProducts() {
       return this.products.filter(
         (product) =>
-          this.formData.orderItems.find(
+          !this.formData.orderItems.some(
             (item) => item.product.id === product.id
-          ) === undefined
+          )
       )
     },
     customerAddresses() {
       const customerId = this.formData.customer.id
+      // customerId有可能为0，虽然可能性非常小，所以未使用`if (customerId)`。
       if (![undefined, null, ''].includes(customerId)) {
         return this.customers.find((customer) => customer.id === customerId)
           .addresses
@@ -350,7 +365,7 @@ export default {
       this.formData.orderItems.splice(index, 1)
     },
     productSelected(productId) {
-      return !!this.formData.orderItems.find(
+      return this.formData.orderItems.some(
         (item) => item.product.id === productId
       )
     }
